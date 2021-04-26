@@ -36,7 +36,7 @@ public class Intermedio {
                 Nodo n = new Nodo(lx.get(i).getLexema(), null);
                 colaOperaciones.inserta(n, null);
             } else {
-                System.out.println("!! " + lx.get(i).getLexema() );
+                
                 Nodo n = new Nodo(lx.get(i).getLexema(), lx.get(i).getTipoToken());
                 colaOperaciones.inserta(n, null);
             }
