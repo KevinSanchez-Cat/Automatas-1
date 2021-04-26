@@ -1,0 +1,232 @@
+package codigo;
+
+import java_cup.runtime.Symbol;
+
+parser code
+{:
+    private Symbol s;
+    public String resultado;
+    public int cont = 1;
+    public Nodo padre;
+
+    public void syntax_error(Symbol s){
+        
+            Main.notificar_er("Error sintaxis en la linea " +(s.right+1) + " no se esperaba " + s.value );
+
+    }
+
+    public void unrecovered_syntax_error(Symbol s) throws java.lang.Exception{ 
+        
+            Main.notificar_er("Error no se encontró un punto de recuperación");
+       
+    }
+
+    public Symbol getS(){
+        System.out.println ( s );
+        return this.s;  
+        
+    }
+:};
+
+terminal String, Int, Float, Cadena, If, Else, While, Return, Boolean, True, False,
+    Igual, Op_relacional, Parentesis_a, Parentesis_c, Metodo,
+    Llave_a, Llave_c, Inicio, P_coma, Identificador,Op_aritmetico, Lectura, Escritura,
+    Numero, Flotante, Coma, ERROR, Op_logico, Class, Void;
+non terminal INICIO, SENTENCIA, DECLARACION, IF, AGREGA_COMPARACION, CONCATENAR, METODO, AGREGAR, TIPOS_DATO,OPERACION_MAT3,
+    WHILE, COMPARACION, OPERACION_MAT, NUMEROS, VALOR, LECTURA, METODOS, BOOLEANOS, AGREGA_BOL, OPERACION_LOG,
+    ESCRITURA, OPERACION_MAT2, OPERACION_MAT1, AGREGA_OPERACION,OPERACION_REL, ASIGNACION, DECLARACIONES;
+
+start with INICIO;
+
+INICIO ::= 
+    Class Inicio Llave_a METODOS Llave_c |
+    Class Inicio Llave_a DECLARACIONES METODOS Llave_c 
+    
+;
+
+METODOS ::=
+    METODOS METODO |
+    METODO
+;
+
+METODO ::= 
+    TIPOS_DATO Metodo Parentesis_a Parentesis_c Llave_a SENTENCIA Return VALOR P_coma Llave_c |
+    Void Metodo Parentesis_a Parentesis_c Llave_a SENTENCIA Llave_c
+;
+
+DECLARACIONES ::=
+    DECLARACIONES DECLARACION |
+    DECLARACION |
+    DECLARACIONES ASIGNACION |
+    ASIGNACION |
+    error P_coma {:  System.out.println ( "Error" + sym.ERROR ) ;:} |
+    error Llave_c {:  System.out.println ( "Error" + sym.ERROR ) ;:}
+;
+
+SENTENCIA ::= 
+    SENTENCIA DECLARACION |
+    DECLARACION |
+    SENTENCIA ASIGNACION |
+    ASIGNACION |
+    SENTENCIA IF | 
+    IF |
+    SENTENCIA WHILE |
+    WHILE |
+    SENTENCIA LECTURA |
+    LECTURA |
+    SENTENCIA ESCRITURA |
+    ESCRITURA |
+    error P_coma {:  System.out.println ( "Error" + sym.ERROR ) ;:} |
+    error Llave_c {:  System.out.println ( "Error" + sym.ERROR ) ;:}
+;
+
+DECLARACION ::= 
+    String Identificador P_coma |
+    String Identificador AGREGAR P_coma |
+    String Identificador Igual Cadena P_coma |
+    String Identificador Igual Cadena CONCATENAR 
+
+    Int Identificador P_coma | 
+    Int Identificador AGREGAR P_coma | 
+    Int Identificador Igual NUMEROS P_coma |
+    Int Identificador Igual Cadena P_coma |
+    Int Identificador Igual Cadena AGREGAR P_coma |
+    Int Identificador Igual NUMEROS AGREGAR P_coma |
+    Int Identificador Igual OPERACION_MAT P_coma |
+    Int Identificador Igual OPERACION_MAT AGREGAR P_coma |
+
+    Float Identificador P_coma | 
+    Float Identificador AGREGAR P_coma | 
+    Float Identificador Igual Cadena P_coma |
+    Float Identificador Igual Cadena AGREGAR P_coma|
+    Float Identificador Igual OPERACION_MAT P_coma |
+    Float Identificador Igual OPERACION_MAT AGREGAR P_coma|
+    Float Identificador Igual NUMEROS P_coma |
+    Float Identificador Igual NUMEROS AGREGAR P_coma
+
+    Boolean Identificador P_coma | 
+    Boolean Identificador AGREGA_BOL P_coma | 
+    Boolean Identificador Igual False P_coma |
+    Boolean Identificador Igual True P_coma |
+    Boolean Identificador Igual COMPARACION P_coma |
+    Boolean Identificador Igual BOOLEANOS AGREGA_BOL P_coma 
+;
+
+AGREGAR ::=
+    AGREGAR Coma Identificador |
+    Coma Identificador |
+    AGREGAR Coma ASIGNACION |
+    Coma ASIGNACION 
+;
+
+CONCATENAR::=
+    CONCATENAR Op_aritmetico Cadena |
+    Op_aritmetico Cadena
+;
+ASIGNACION ::=
+    Identificador Igual OPERACION_MAT P_coma |
+    Identificador Igual VALOR P_coma |
+    Identificador Igual BOOLEANOS P_coma |
+    Identificador Igual OPERACION_LOG P_coma
+;
+
+OPERACION_LOG ::=
+    OPERACION_LOG OPERACION_REL AGREGA_COMPARACION |
+    OPERACION_REL AGREGA_COMPARACION
+;
+
+OPERACION_MAT ::=
+    OPERACION_MAT1 |
+    Parentesis_a OPERACION_MAT Parentesis_c |
+    Parentesis_a OPERACION_MAT Parentesis_c AGREGA_OPERACION |
+    Parentesis_a VALOR Parentesis_c |
+    Parentesis_a VALOR Parentesis_c AGREGA_OPERACION |
+    OPERACION_MAT3 AGREGA_OPERACION |
+    OPERACION_MAT3 
+;
+
+OPERACION_MAT1::=
+    OPERACION_MAT2 |
+    OPERACION_MAT2 AGREGA_OPERACION 
+;
+
+OPERACION_MAT2 ::=
+    VALOR Op_aritmetico VALOR 
+;
+
+OPERACION_MAT3::=
+    VALOR Op_aritmetico Parentesis_a OPERACION_MAT Parentesis_c 
+;
+
+AGREGA_OPERACION ::=
+    Op_aritmetico OPERACION_MAT |
+    Op_aritmetico VALOR 
+;
+
+
+AGREGA_BOL ::=
+    AGREGA_BOL Coma Identificador |
+    Coma Identificador |
+    AGREGA_BOL Coma Identificador Igual BOOLEANOS |
+    Coma Identificador Igual BOOLEANOS |
+    AGREGA_BOL Coma Identificador Igual COMPARACION |
+    Coma Identificador Igual COMPARACION 
+;
+
+NUMEROS ::=
+    Numero | Flotante
+;
+
+VALOR ::=
+    Numero | 
+    Cadena | 
+    Flotante | 
+    Identificador 
+;
+
+TIPOS_DATO ::=
+    String |
+    Int |
+    Float
+;
+BOOLEANOS ::=
+    True |
+    False
+;
+
+COMPARACION ::=
+    OPERACION_REL |
+    OPERACION_REL AGREGA_COMPARACION 
+;
+
+OPERACION_REL ::=
+    VALOR Op_relacional VALOR |
+    OPERACION_MAT Op_relacional VALOR |
+    VALOR Op_relacional OPERACION_MAT |
+    OPERACION_MAT Op_relacional OPERACION_MAT 
+;
+
+AGREGA_COMPARACION ::=
+    Op_logico COMPARACION 
+    
+;
+
+IF ::= 
+    If Parentesis_a COMPARACION Parentesis_c Llave_a SENTENCIA Llave_c |
+    If Parentesis_a COMPARACION Parentesis_c Llave_a SENTENCIA Llave_c Else Llave_a SENTENCIA Llave_c 
+;
+
+WHILE ::= 
+    While Parentesis_a COMPARACION Parentesis_c Llave_a SENTENCIA Llave_c
+;
+
+LECTURA ::= 
+    Lectura Parentesis_a Identificador Parentesis_c P_coma
+;
+
+ESCRITURA ::= 
+    Escritura Parentesis_a VALOR Parentesis_c P_coma 
+;
+
+
+

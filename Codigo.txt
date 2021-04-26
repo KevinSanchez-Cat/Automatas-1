@@ -1,0 +1,5 @@
+class #ejemplo{
+	int a = 9+4;
+int b = a+2;
+
+}
