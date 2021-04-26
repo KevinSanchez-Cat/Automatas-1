@@ -343,21 +343,18 @@ public class Main extends javax.swing.JFrame {
     
     private void btnAnaliza2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAnaliza2ActionPerformed
         // TODO add your handling code here:
-        if (l) {
-            lexico();
-        }
+        lexico();
+        Intermedio.operaciones = "";
         sintactico();
         semantico();
         Intermedio.temp  = 0;
-        objeto.setText("");
-        Intermedio.operaciones  = "";
-        Intermedio.intermedio(lexema);
-        objeto.setText(Intermedio.operaciones);
+        
+        
     }//GEN-LAST:event_btnAnaliza2ActionPerformed
 
     private void btnAnaliza3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAnaliza3ActionPerformed
         objeto.setText("");
-        Intermedio.intermedio(lexema);
+//        Intermedio.intermedio(lexema);
         objeto.setText(Intermedio.operaciones);
     }//GEN-LAST:event_btnAnaliza3ActionPerformed
         

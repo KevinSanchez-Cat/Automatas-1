@@ -16,30 +16,25 @@ import java.util.ArrayList;
  */
 public class Intermedio {
 
-    static String operaciones = "";
+    public static String operaciones ="";
     
     public static void recibeTokens(ArrayList<Lexema> lx, ArrayList<TablaSimbolos> tSimbolos) {
         //
         String tipo = "";
         String id = "";
 
-        String tr = "************************* EXPRESION *************************\n";
+        String tr = "*************************    EXPRESIÓN    *************************\n";
         for (int i = 0; i < lx.size(); i++) {
             tr += lx.get(i).getLexema();
         }
-        tr += "\n************************* CUADRUPLOS *************************\n";
+        tr += "\n*************************  CUÁDRUPLOS   *************************\n";
+        tr += "OPERANDO\tOPE 1\tOPE 2\tRESULTADO\n";
         operaciones += tr;
         
         ColaD colaOperaciones = new ColaD();
         for (int i = 0; i < lx.size(); i++) {
-            if (lx.get(i).getTipoToken() == null) {
-                Nodo n = new Nodo(lx.get(i).getLexema(), null);
-                colaOperaciones.inserta(n, null);
-            } else {
-                
-                Nodo n = new Nodo(lx.get(i).getLexema(), lx.get(i).getTipoToken());
-                colaOperaciones.inserta(n, null);
-            }
+            Nodo n = new Nodo(lx.get(i).getLexema(), -1);
+            colaOperaciones.inserta(n, null);
         }
         ColaD notacionPostfija = Intermedio.posfijo(colaOperaciones);
         //
@@ -54,21 +49,13 @@ public class Intermedio {
         System.out.println("*****************************************************");
         while (colaPost.getA() != null) {
             Nodo n = colaPost.elimina(null);
-            if (n.getTipo() != "null") {
-                colaPost2.inserta(new Nodo(n.getS(), n.getTipo()), null);
-                notacionPostfija.inserta(new Nodo(n.getS(), n.getTipo()), null);                
-            } else {
-                colaPost2.inserta(new Nodo(n.getS(), null), null);
-                notacionPostfija.inserta(new Nodo(n.getS(), null), null);
-    
-            }
+            colaPost2.inserta(new Nodo(n.getS(), -1), null);
+            notacionPostfija.inserta(new Nodo(n.getS(), -1), null);
         }
         //
 
-        Intermedio.operacionesIntermedio(colaPost2);
-        
         String valor = String.valueOf(Intermedio.operaciones(notacionPostfija));
-        
+        Intermedio.operacionesIntermedio(colaPost2);
         
         String tipoDatoValor = Intermedio.tipoDato(valor);
         if (Intermedio.asignacion(tipo, tipoDatoValor)) {
@@ -99,30 +86,30 @@ public class Intermedio {
         PilaD pOperadores = new PilaD();
         while (cola.getF() != null) {
             String s = cola.elimina(null).getS();
-            if (isOperadorS(s)) {
+            if (Intermedio.isOperadorS(s)) {
                 if (isOperador(s)) {
                     if (pOperadores.getTope() != null) {
                         String s2 = pOperadores.elimina(null).getS();
                         if (isOperador(s2)) {
                             if (prioridad(s2) >= prioridad(s)) {
-                                pOperadores.inserta(new Nodo(s, null), null);
-                                pResultado.inserta(new Nodo(s2, null), null);
+                                pOperadores.inserta(new Nodo(s, -1), null);
+                                pResultado.inserta(new Nodo(s2, -1), null);
                             } else if (prioridad(s2) < prioridad(s)) {
-                                pOperadores.inserta(new Nodo(s2, null), null);
-                                pOperadores.inserta(new Nodo(s, null), null);
+                                pOperadores.inserta(new Nodo(s2, -1), null);
+                                pOperadores.inserta(new Nodo(s, -1), null);
                             } else {
-                                pOperadores.inserta(new Nodo(s2, null), null);
-                                pOperadores.inserta(new Nodo(s, null), null);
+                                pOperadores.inserta(new Nodo(s2, -1), null);
+                                pOperadores.inserta(new Nodo(s, -1), null);
                             }
                         } else {
-                            pOperadores.inserta(new Nodo(s2, null), null);
-                            pOperadores.inserta(new Nodo(s, null), null);
+                            pOperadores.inserta(new Nodo(s2, -1), null);
+                            pOperadores.inserta(new Nodo(s, -1), null);
                         }
                     } else {
-                        pOperadores.inserta(new Nodo(s, null), null);
+                        pOperadores.inserta(new Nodo(s, -1), null);
                     }
                 } else if (s.equals("(")) {
-                    pOperadores.inserta(new Nodo(s, null), null);
+                    pOperadores.inserta(new Nodo(s, -1), null);
                 } else if (s.equals(")")) {
                     while (pOperadores.getTope() != null) {
                         if (pOperadores.getTope().getS().equals("(")) {
@@ -130,17 +117,17 @@ public class Intermedio {
                             break;
                         } else {
                             String op = pOperadores.elimina(null).getS();
-                            pResultado.inserta(new Nodo(op, null), null);
+                            pResultado.inserta(new Nodo(op, -1), null);
                         }
                     }
                 }
             } else {
-                pResultado.inserta(new Nodo(s, null), null);
+                pResultado.inserta(new Nodo(s, -1), null);
             }
         }
         while (pOperadores.getTope() != null) {
             String op = pOperadores.elimina(null).getS();
-            pResultado.inserta(new Nodo(op, null), null);
+            pResultado.inserta(new Nodo(op, -1), null);
         }
 
         return pResultado;
@@ -211,8 +198,8 @@ public class Intermedio {
 
                     }
                     if ("TRUE".equals(res[0])) {
-                        pOperacion.inserta(new Nodo(String.valueOf(res[1]), null), null);
-//                        System.out.println("Resultado: " + res[1]);
+                        pOperacion.inserta(new Nodo(String.valueOf(res[1]), -1), null);
+                        System.out.println("Resultado: " + res[1]);
                         resultado = res[1];
                     } else {
                         //ERROR NO SE PUEDE REALIZAR LA OPERACION
@@ -226,93 +213,38 @@ public class Intermedio {
                     break;
                 }
             } else {
-                pOperacion.inserta(new Nodo(s, null), null);
+                pOperacion.inserta(new Nodo(s, -1), null);
             }
         }
-        operaciones += "Resultado: " + resultado + "\n\n";
         return resultado;
     }
 
     public static Object operacionesIntermedio(ColaD pResultado) {
         PilaD pOperacion = new PilaD();
         Object resultado = 0;
-        String res[];
         while (pResultado.getF() != null) {
-            Nodo s = pResultado.elimina(null);
+            String s = pResultado.elimina(null).getS();
             Cuaduplos cI = new Cuaduplos();
-            if (isOperador(s.getS())) {
-                Nodo nOp1 = pOperacion.elimina(null);
-                Nodo nOp2 = pOperacion.elimina(null);
-                String op2 = "";
-                String op1 = "";
-                System.out.println("..-");
-                System.out.println(nOp1.getTipo() +" - "+nOp1.getS());
-                System.out.println(nOp2.getTipo() + " - " + nOp2.getS());
-                System.out.println("..-");
-                if (nOp1.getTipo() != null) {
-                    //L buscas la variable y lo retornas en
-                    op1=valor(AnalisisSemantico.tablaSimbolos, nOp1.getS());
-                    System.out.println("OP1 " + op1);
-                } else {
-                    op1 = nOp1.getS();
-                }
-                if (nOp2.getTipo() != null) {
-                    op2=valor(AnalisisSemantico.tablaSimbolos, nOp2.getS());
-                    System.out.println("OP2 " + op2);
-                } else {
-                    op2 = nOp2.getS();
-                }
-                
-                cI.setOp(s.getS());
+            if (isOperador(s)) {
+                String op2 = pOperacion.elimina(null).getS();
+                String op1 = pOperacion.elimina(null).getS();
+                cI.setOp(s);
                 cI.setOp1(op1);
                 cI.setOp2(op2);
-                if (s.getS().equals("=")) {
+                if (s.equals("=")) {
                     cI.setTemp(" ");
                 } else {
                     cI.setTemp("Temp" + temp);
                 }
-
-                String op22 = op2;
-                String op11 = op1;
-
-                String tipoOp1 = tipoDato(op11);
-                String tipoOp2 = tipoDato(op22);
-                if (s.getS().equals("=")) {
-                    cI.setRes((String) resultado);
-                } else {
-                    res = expresionFinal(op11, op22, s.getS(), tipoOp1, tipoOp2);
-
-                    if ("TRUE".equals(res[0])) {
-                        pOperacion.inserta(new Nodo(String.valueOf(res[1]), null), null);
-                        System.out.println("Resultado: " + res[1]);
-                        resultado = res[1];
-                    } else {
-                        //ERROR NO SE PUEDE REALIZAR LA OPERACION
-                        System.out.println("Error de operacion");
-                        break;
-                    }
-                    
-                    cI.setRes(res[1]);
-                }
-
-                pOperacion.inserta(new Nodo("Temp" + temp, null), null);
+                pOperacion.inserta(new Nodo("Temp" + temp, -1), null);
                 temp++;
-
-                operaciones += cI.getOp() + " " + cI.getOp1() + " " + cI.getOp2() + " " + cI.getTemp() + "\n";
-
+                operaciones += cI.getOp() + "\t " + cI.getOp1() + "\t " + cI.getOp2() + "\t " + cI.getTemp() +"\n";
             } else {
-                System.out.println("----------------> " + s.getTipo());
-                if (s.getTipo() != null) {
-                    pOperacion.inserta(new Nodo(s.getS(), s.getTipo()), null);
-                } else {
-                    pOperacion.inserta(new Nodo(s.getS(), null), null);
-                }
+                pOperacion.inserta(new Nodo(s, -1), null);
             }
-
-            }
+        }
         return resultado;
     }
-
 
     /**
      * Método que regresa el valor resultante, comparando primero los tipos de
@@ -1792,83 +1724,10 @@ public class Intermedio {
 
     }
     
-    private static final int VARIABLE = 50;
-    private static final int TIPO_DATO = 1;
-    private static final int PUNTO_Y_COMA = 2;
-    private static final int IGUAL = 3;
-    private static final int OPERADOR_ARITMETICO = 4;
-    private static final int OPERADOR_RELACIONAL = 5;
-    private static final int OPERADOR_LOGICO = 18;
+    static int alondra=0;
     
-    private static TablaSimbolos lastToken(ArrayList<TablaSimbolos> tokens, TablaSimbolos token) {
-        return tokens.get(tokens.indexOf(token) - 1);
-    }
-    
-    private static TablaSimbolos nextToken(ArrayList<TablaSimbolos> tokens, TablaSimbolos token) {
-        return tokens.get(tokens.indexOf(token) + 1);
-    }
-    
-    private static String valor(ArrayList<Variable> tablaSimbolos, String nombreVariable) {
-        String valor = null;
-        for (Variable variable : tablaSimbolos) {
-            if (variable.getVariable().equals(nombreVariable)) {
-                valor = variable.getValor();
-            }
-        }
-
-        return valor;
-    }
-    
-    public static void intermedio(ArrayList<TablaSimbolos> lexema){
-        
-        for (TablaSimbolos tokenActual : lexema) {
-            ArrayList<Lexema> arr = new ArrayList<Lexema>();
-            switch (tokenActual.getNumToken()) {
-                case VARIABLE: 
-                    Lexema a = new Lexema();
-                    a.setLexema(tokenActual.lexema);
-                    arr.add(a);
-                    TablaSimbolos tokenSiguiente = nextToken(lexema, tokenActual);
-                    switch (tokenSiguiente.getNumToken()) {
-                        case IGUAL:
-                            Lexema a4 = new Lexema();
-                            a4.setLexema(tokenSiguiente.lexema);
-                            arr.add(a4);
-                            tokenSiguiente = nextToken(lexema, tokenSiguiente);
-                            boolean agrega = true, hacer=true;
-                            TablaSimbolos t = null;
-                            while(agrega){ 
-                                if (tokenSiguiente.getNumToken() == VARIABLE) {
-                                    Lexema a3 = new Lexema();
-                                    a3.setLexema(tokenSiguiente.lexema);
-                                    a3.setTipoToken(valor(AnalisisSemantico.tablaSimbolos, tokenSiguiente.lexema));
-                                    System.out.println(valor(AnalisisSemantico.tablaSimbolos, tokenSiguiente.lexema) + " VA");
-                                    arr.add(a3);
-                                } else {            
-                                    Lexema a1 = new Lexema();
-                                    a1.setLexema(tokenSiguiente.lexema);
-                                    arr.add(a1);
-                                }
-                                t = tokenSiguiente;
-                                tokenSiguiente = nextToken(lexema, tokenSiguiente);
-                                if (tokenSiguiente.numToken == PUNTO_Y_COMA) {
-                                    agrega = false;
-                                    if (t.getNumToken() == OPERADOR_ARITMETICO || t.getNumToken() == OPERADOR_LOGICO || t.getNumToken() == OPERADOR_RELACIONAL) {
-                                        hacer = false;
-                                    }
-                                }
-                            }
-                            if (hacer) {
-                                recibeTokens(arr, null);
-                            }
-                        break;
-                    }
-            }
-        }
-    }
-    
-                                
     public static void main(String[] args) {
+        
         ArrayList<Lexema> arr = new ArrayList<>();
         Lexema a = new Lexema();
         a.setLexema("var");
@@ -1877,34 +1736,16 @@ public class Intermedio {
         a2.setLexema("=");
         arr.add(a2);
         Lexema a3 = new Lexema();
-        a3.setLexema("54");
+        a3.setLexema("a");
         arr.add(a3);
         Lexema a4 = new Lexema();
         a4.setLexema("+");
         arr.add(a4);
         Lexema a5 = new Lexema();
-        a5.setLexema("6");
+        a5.setLexema("b");
         arr.add(a5);
-        Lexema a11 = new Lexema();
-        a11.setLexema("-");
-        arr.add(a11);
-        Lexema a6 = new Lexema();
-        a6.setLexema("(");
-        arr.add(a6);
-        Lexema a7 = new Lexema();
-        a7.setLexema("2");
-        arr.add(a7);
-        Lexema a8 = new Lexema();
-        a8.setLexema("+");
-        arr.add(a8);
-        Lexema a9 = new Lexema();
-        a9.setLexema("5");
-        arr.add(a9);
-        Lexema a10 = new Lexema();
-        a10.setLexema(")");
-        arr.add(a10);
+        
         Intermedio.recibeTokens(arr, null);
-        System.out.println("---");
-        System.out.println(operaciones);
+
     }
 }

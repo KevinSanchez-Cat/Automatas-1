@@ -46,6 +46,7 @@ public class AnalisisSemantico {
         for (TablaSimbolos tokenActual : lexema) {
             switch (tokenActual.getNumToken()) {
                 case VARIABLE:
+                    String variable  = tokenActual.getLexema();
                     TablaSimbolos tokenAnterior = lastToken(lexema, tokenActual);
                     TablaSimbolos tokenSiguiente = nextToken(lexema, tokenActual);
                     switch (tokenAnterior.getNumToken()) {
@@ -63,8 +64,17 @@ public class AnalisisSemantico {
                                         }
                                     break;
                                     case IGUAL:
+                                        ArrayList<Lexema> arrInt = new ArrayList<Lexema>();
+                                        Lexema a = new Lexema();
+                                        a.setLexema(tokenActual.lexema);
+                                        arrInt.add(a);
+                                        Lexema a2 = new Lexema();
+                                        a2.setLexema(tokenSiguiente.lexema);
+                                        arrInt.add(a2);
+                                        
                                         tokenSiguiente = nextToken(lexema, tokenSiguiente);
                                         ArrayList<String> arr = new ArrayList<String>();
+                                        
                                         boolean agrega = true, hacer=true;
                                         if (tokenSiguiente.getNumToken() == PUNTO_Y_COMA) {
                                             agrega = false;
@@ -89,10 +99,17 @@ public class AnalisisSemantico {
                                                         errorNoInicializada(tokenSiguiente);
                                                         hacer = false;
                                                     } else {
+                                                        Lexema a3 = new Lexema();
+                                                        a3.setLexema(tokenSiguiente.lexema);
+                                                        a3.setTipoToken(valor(tablaSimbolos, tokenSiguiente.lexema));
+                                                        arrInt.add(a3);
                                                         arr.add(valor(tablaSimbolos, tokenSiguiente.lexema));
                                                     }
                                                 }
                                             } else {
+                                                Lexema a3 = new Lexema();
+                                                a3.setLexema(tokenSiguiente.lexema);
+                                                arrInt.add(a3);
                                                 arr.add(tokenSiguiente.lexema);
                                             }
                                             t = tokenSiguiente;
@@ -115,6 +132,10 @@ public class AnalisisSemantico {
                                                 String tipoDatoValor = Semantico.tipoDato(valor); //RETORNA EL TIPO DE DATO DEL VALOR
                                                 if (Semantico.asignacion(tipoDatoID, tipoDatoValor)) { //VALIDA EL TIPO DE DATO DEL IDENTIFICADOR CON EL DEL VALOR
                                                     agregarVarTabSimbolos(tablaSimbolos, tokenActual.getLexema(), tokenAnterior.getLexema(), true, true, 1,valor);
+                                                    Intermedio.recibeTokens(arrInt, null);
+                                                    Intermedio.operaciones += "*************************   RESULTADO   *************************\n";
+                                                    Intermedio.operaciones += variable + " = " + valor + "\n\n\n";
+                                                    Main.objeto.setText(Intermedio.operaciones);
                                                 } else {
                                                     if (tipoDatoValor.equals("STRING")) {
                                                         tipoDatoValor  = "String";
@@ -127,6 +148,8 @@ public class AnalisisSemantico {
                                                     }
                                                     errorTipos(t, tipoDatoValor, tipo);
                                                 }
+                                                
+                                                
                                             }
                                         }
                                         tokenActual = nextToken(lexema, t);
@@ -167,10 +190,19 @@ public class AnalisisSemantico {
                                                                                     errorNoInicializada(tokenSiguiente);
                                                                                     hacer = false;
                                                                                 } else {
+                                                                                    Lexema a3 = new Lexema();
+                                                                                    a3.setLexema(tokenSiguiente.lexema);
+                                                                                    a3.setTipoToken(valor(tablaSimbolos, tokenSiguiente.lexema));
+                                                                                    arrInt.add(a3);
+                                                        
                                                                                     arr.add(valor(tablaSimbolos, tokenSiguiente.lexema));
                                                                                 }
                                                                             }
                                                                         } else {
+                                                                            Lexema a3 = new Lexema();
+                                                                            a3.setLexema(tokenSiguiente.lexema);
+                                                                            arrInt.add(a3);
+                                                
                                                                             arr.add(tokenSiguiente.lexema);
                                                                         }
                                                                         t = tokenSiguiente;
@@ -193,6 +225,10 @@ public class AnalisisSemantico {
                                                                             String tipoDatoValor = Semantico.tipoDato(valor); //RETORNA EL TIPO DE DATO DEL VALOR
                                                                             if (Semantico.asignacion(tipoDatoID, tipoDatoValor)) { //VALIDA EL TIPO DE DATO DEL IDENTIFICADOR CON EL DEL VALOR
                                                                                 agregarVarTabSimbolos(tablaSimbolos, tokenActual.getLexema(), tokenAnterior.getLexema(), true, true, 1,valor);
+                                                                                Intermedio.recibeTokens(arrInt, null);
+                                                                                Intermedio.operaciones += "*************************   RESULTADO   *************************\n";
+                                                                                Intermedio.operaciones += variable + " = " + valor + "\n\n\n";
+                                                                                Main.objeto.setText(Intermedio.operaciones);
                                                                             } else {
                                                                                 if (tipoDatoValor.equals("STRING")) {
                                                                                     tipoDatoValor  = "String";
@@ -206,6 +242,7 @@ public class AnalisisSemantico {
                                                                                 errorTipos(t, tipoDatoValor, tipo);
                                                                             }
                                                                         }
+                                                                        
                                                                     }
                                                                 break;
                                                                 default:
@@ -249,6 +286,13 @@ public class AnalisisSemantico {
                                                         tokenSiguiente = nextToken(lexema, tokenActual);
                                                         switch (tokenSiguiente.getNumToken()) {
                                                             case IGUAL:
+                                                                arrInt = new ArrayList<Lexema>();
+                                                                a = new Lexema();
+                                                                a.setLexema(tokenActual.lexema);
+                                                                arrInt.add(a);
+                                                                a2 = new Lexema();
+                                                                a2.setLexema(tokenSiguiente.lexema);
+                                                                arrInt.add(a2);
                                                                 tokenSiguiente = nextToken(lexema, tokenSiguiente);
                                                                 arr = new ArrayList<String>();
                                                                 agrega = true; 
@@ -276,10 +320,17 @@ public class AnalisisSemantico {
                                                                                 errorNoInicializada(tokenSiguiente);
                                                                                 hacer = false;
                                                                             } else {
+                                                                                Lexema a3 = new Lexema();
+                                                                                a3.setLexema(tokenSiguiente.lexema);
+                                                                                a3.setTipoToken(valor(tablaSimbolos, tokenSiguiente.lexema));
+                                                                                arrInt.add(a3);
                                                                                 arr.add(valor(tablaSimbolos, tokenSiguiente.lexema));
                                                                             }
                                                                         }
                                                                     } else {
+                                                                        Lexema a3 = new Lexema();
+                                                                        a3.setLexema(tokenSiguiente.lexema);
+                                                                        arrInt.add(a3);
                                                                         arr.add(tokenSiguiente.lexema);
                                                                     }
                                                                     t = tokenSiguiente;
@@ -302,6 +353,10 @@ public class AnalisisSemantico {
                                                                         String tipoDatoValor = Semantico.tipoDato(valor); //RETORNA EL TIPO DE DATO DEL VALOR
                                                                         if (Semantico.asignacion(tipoDatoID, tipoDatoValor)) { //VALIDA EL TIPO DE DATO DEL IDENTIFICADOR CON EL DEL VALOR
                                                                             agregarVarTabSimbolos(tablaSimbolos, tokenActual.getLexema(), tokenAnterior.getLexema(), true, true, 1,valor);
+                                                                            Intermedio.recibeTokens(arrInt, null);
+                                                                            Intermedio.operaciones += "*************************   RESULTADO   *************************\n";
+                                                                            Intermedio.operaciones += variable + " = " + valor + "\n\n\n";
+                                                                            Main.objeto.setText(Intermedio.operaciones);
                                                                         } else {
                                                                             if (tipoDatoValor.equals("STRING")) {
                                                                                 tipoDatoValor  = "String";
@@ -341,6 +396,12 @@ public class AnalisisSemantico {
                             tipo = tipo(tablaSimbolos, tokenActual.lexema);
                             String var = tokenActual.lexema;
                             System.out.println(var + "ASIG");
+                            
+                            ArrayList<Lexema> arrInt = new ArrayList<Lexema>();
+                            Lexema a = new Lexema();
+                            a.setLexema(tokenActual.lexema);
+                            arrInt.add(a);
+                            
                             boolean revisa = true, hacer = true;
                             if (!isDuplicated(tablaSimbolos, var)) {
                                 errorNoDeclarada(tokenActual);
@@ -350,6 +411,11 @@ public class AnalisisSemantico {
                                 System.out.println(tokenActual.lexema + "+");
                                 switch(tokenActual.getNumToken()){
                                     case IGUAL:
+                                        
+                                        Lexema a2 = new Lexema();
+                                        a2.setLexema(tokenActual.lexema);
+                                        arrInt.add(a2);
+                                        
                                         tokenActual = nextToken(lexema, tokenActual);
                                         System.out.println(tokenActual.lexema);
                                         ArrayList<String> arr = new ArrayList<String>();
@@ -367,7 +433,11 @@ public class AnalisisSemantico {
                                                         agrega = false;
                                                         hacer = false;
                                                     } else {
+                                                        Lexema a5 = new Lexema();
+                                                        a5.setLexema(tokenActual.lexema);
+                                                        arrInt.add(a5);
                                                         arr.add(valor(tablaSimbolos, tokenActual.lexema));
+                                                        System.out.println("VALOR ---- " + valor(tablaSimbolos, tokenActual.lexema));
                                                         tokenSiguiente = nextToken(lexema, tokenActual);
                                                         System.out.println(tokenSiguiente.lexema);
                                                         if (tokenSiguiente.numToken == COMA || tokenSiguiente.numToken == PUNTO_Y_COMA) {
@@ -387,10 +457,19 @@ public class AnalisisSemantico {
                                                                         hacer = false;
                                                                         hacer = false;
                                                                     } else {
-                                                                        arr.add(valor(tablaSimbolos, tokenActual.lexema));
+                                                                        Lexema a3 = new Lexema();
+                                                                        a3.setLexema(tokenSiguiente.lexema);
+                                                                        a3.setTipoToken(valor(tablaSimbolos, tokenSiguiente.lexema));
+                                                                        arrInt.add(a3);
+                                                                        System.out.println("VALOR ---- " + valor(tablaSimbolos, tokenSiguiente.lexema));
+                                                                        arr.add(valor(tablaSimbolos, tokenSiguiente.lexema));
                                                                     }
                                                                 }
                                                             } else {
+                                                                Lexema a3 = new Lexema();
+                                                                a3.setLexema(tokenSiguiente.lexema);
+                                                                arrInt.add(a3);
+                                                                
                                                                 arr.add(tokenSiguiente.lexema);
                                                             }
                                                             t = tokenSiguiente;
@@ -413,6 +492,10 @@ public class AnalisisSemantico {
                                                                 if (Semantico.asignacion(tipoDatoID, tipoDatoValor)) { //VALIDA EL TIPO DE DATO DEL IDENTIFICADOR CON EL DEL VALOR
                                                                     cambiarValor(tablaSimbolos, var, valor);
                                                                     cambiarInicializada(tablaSimbolos, var, true);
+                                                                    Intermedio.recibeTokens(arrInt, null);
+                                                                    Intermedio.operaciones += "*************************   RESULTADO   *************************\n";
+                                                                    Intermedio.operaciones += variable + " = " + valor + "\n\n\n";
+                                                                    Main.objeto.setText(Intermedio.operaciones);
                                                                 } else {
                                                                     if (tipoDatoValor.equals("STRING")) {
                                                                         tipoDatoValor  = "String";
@@ -431,6 +514,9 @@ public class AnalisisSemantico {
                                                 }
                                             break;
                                             case ENTERO:
+                                                Lexema a5 = new Lexema();
+                                                a5.setLexema(tokenActual.lexema);
+                                                arrInt.add(a5);
                                                 arr.add(tokenActual.lexema);
                                                 tokenSiguiente = nextToken(lexema, tokenActual);
                                                 System.out.println(tokenSiguiente.lexema);
@@ -452,10 +538,20 @@ public class AnalisisSemantico {
                                                                 hacer = false;
                                                                 hacer = false;
                                                             } else {
+                                                                
+                                                                Lexema a3 = new Lexema();
+                                                                a3.setLexema(tokenSiguiente.lexema);
+                                                                a3.setTipoToken(valor(tablaSimbolos, tokenSiguiente.lexema));
+                                                                arrInt.add(a3);
+                                                                        
                                                                 arr.add(valor(tablaSimbolos, tokenSiguiente.lexema));
                                                             }
                                                         }
                                                     } else {
+                                                        Lexema a3 = new Lexema();
+                                                        a3.setLexema(tokenSiguiente.lexema);
+                                                        arrInt.add(a3);
+                                                        
                                                         arr.add(tokenSiguiente.lexema);
                                                     }
                                                     t = tokenSiguiente;
@@ -478,6 +574,10 @@ public class AnalisisSemantico {
                                                         if (Semantico.asignacion(tipoDatoID, tipoDatoValor)) { //VALIDA EL TIPO DE DATO DEL IDENTIFICADOR CON EL DEL VALOR
                                                             cambiarValor(tablaSimbolos, var, valor);
                                                             cambiarInicializada(tablaSimbolos, var, true);
+                                                            Intermedio.recibeTokens(arrInt, null);
+                                                            Intermedio.operaciones += "*************************   RESULTADO   *************************\n";
+                                                            Intermedio.operaciones += variable + " = " + valor + "\n\n\n";
+                                                            Main.objeto.setText(Intermedio.operaciones);
                                                         } else {
                                                             if (tipoDatoValor.equals("STRING")) {
                                                                 tipoDatoValor  = "String";
@@ -494,6 +594,10 @@ public class AnalisisSemantico {
                                                 }
                                             break;
                                             case FLOTANTE:
+                                                Lexema a6 = new Lexema();
+                                                a6.setLexema(tokenActual.lexema);
+                                                arrInt.add(a6);
+                                                        
                                                 arr.add(tokenActual.lexema);
                                                 tokenSiguiente = nextToken(lexema, tokenActual);
                                                 System.out.println(tokenSiguiente.lexema);
@@ -515,10 +619,18 @@ public class AnalisisSemantico {
                                                                 hacer = false;
                                                                 hacer = false;
                                                             } else {
+                                                                Lexema a3 = new Lexema();
+                                                                a3.setLexema(tokenSiguiente.lexema);
+                                                                a3.setTipoToken(valor(tablaSimbolos, tokenSiguiente.lexema));
+                                                                arrInt.add(a3);
+                                                                
                                                                 arr.add(valor(tablaSimbolos, tokenSiguiente.lexema));
                                                             }
                                                         }
                                                     } else {
+                                                        Lexema a3 = new Lexema();
+                                                        a3.setLexema(tokenSiguiente.lexema);
+                                                        arrInt.add(a3);
                                                         arr.add(tokenSiguiente.lexema);
                                                     }
                                                     t = tokenSiguiente;
@@ -541,6 +653,10 @@ public class AnalisisSemantico {
                                                         if (Semantico.asignacion(tipoDatoID, tipoDatoValor)) { //VALIDA EL TIPO DE DATO DEL IDENTIFICADOR CON EL DEL VALOR
                                                             cambiarValor(tablaSimbolos, var, valor);
                                                             cambiarInicializada(tablaSimbolos, var, true);
+                                                            Intermedio.recibeTokens(arrInt, null);
+                                                            Intermedio.operaciones += "*************************   RESULTADO   *************************\n";
+                                                            Intermedio.operaciones += variable + " = " + valor + "\n\n\n";
+                                                            Main.objeto.setText(Intermedio.operaciones);
                                                         } else {
                                                             if (tipoDatoValor.equals("STRING")) {
                                                                 tipoDatoValor  = "String";
