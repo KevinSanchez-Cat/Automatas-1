@@ -161,7 +161,7 @@ public class Main extends javax.swing.JFrame {
         sintactico.setRows(5);
         jScrollPane4.setViewportView(sintactico);
 
-        jPanel1.add(jScrollPane4, new org.netbeans.lib.awtextra.AbsoluteConstraints(780, 0, 570, 230));
+        jPanel1.add(jScrollPane4, new org.netbeans.lib.awtextra.AbsoluteConstraints(780, 10, 570, 140));
 
         jLabel5.setBackground(new java.awt.Color(255, 255, 255));
         jLabel5.setFont(new java.awt.Font("Segoe UI Symbol", 1, 24)); // NOI18N
@@ -209,14 +209,14 @@ public class Main extends javax.swing.JFrame {
                 btnAnaliza1ActionPerformed(evt);
             }
         });
-        jPanel1.add(btnAnaliza1, new org.netbeans.lib.awtextra.AbsoluteConstraints(690, 280, -1, -1));
+        jPanel1.add(btnAnaliza1, new org.netbeans.lib.awtextra.AbsoluteConstraints(690, 210, -1, -1));
 
         semantico.setColumns(20);
         semantico.setFont(new java.awt.Font("SansSerif", 0, 17)); // NOI18N
         semantico.setRows(5);
         jScrollPane5.setViewportView(semantico);
 
-        jPanel1.add(jScrollPane5, new org.netbeans.lib.awtextra.AbsoluteConstraints(780, 240, 570, 240));
+        jPanel1.add(jScrollPane5, new org.netbeans.lib.awtextra.AbsoluteConstraints(780, 170, 570, 150));
 
         btnAnaliza2.setBackground(new java.awt.Color(255, 255, 255));
         btnAnaliza2.setFont(new java.awt.Font("Segoe UI Symbol", 1, 18)); // NOI18N
@@ -234,32 +234,32 @@ public class Main extends javax.swing.JFrame {
         jLabel10.setFont(new java.awt.Font("Segoe UI Symbol", 1, 24)); // NOI18N
         jLabel10.setForeground(new java.awt.Color(0, 51, 102));
         jLabel10.setText("Intermedio");
-        jPanel1.add(jLabel10, new org.netbeans.lib.awtextra.AbsoluteConstraints(650, 490, 130, -1));
+        jPanel1.add(jLabel10, new org.netbeans.lib.awtextra.AbsoluteConstraints(650, 340, 130, -1));
 
         objeto.setColumns(20);
         objeto.setFont(new java.awt.Font("SansSerif", 0, 17)); // NOI18N
         objeto.setRows(5);
         jScrollPane6.setViewportView(objeto);
 
-        jPanel1.add(jScrollPane6, new org.netbeans.lib.awtextra.AbsoluteConstraints(780, 490, 570, 240));
+        jPanel1.add(jScrollPane6, new org.netbeans.lib.awtextra.AbsoluteConstraints(780, 340, 570, 380));
 
         btnAnaliza3.setBackground(new java.awt.Color(255, 255, 255));
         btnAnaliza3.setFont(new java.awt.Font("Segoe UI Symbol", 1, 18)); // NOI18N
         btnAnaliza3.setForeground(new java.awt.Color(0, 51, 102));
-        btnAnaliza3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/sem.png"))); // NOI18N
+        btnAnaliza3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/iconfinder_745_Business_gear_management_operation_process_Business_Management_4178928 (1).png"))); // NOI18N
         btnAnaliza3.setToolTipText("Semantico");
         btnAnaliza3.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnAnaliza3ActionPerformed(evt);
             }
         });
-        jPanel1.add(btnAnaliza3, new org.netbeans.lib.awtextra.AbsoluteConstraints(690, 520, -1, 50));
+        jPanel1.add(btnAnaliza3, new org.netbeans.lib.awtextra.AbsoluteConstraints(690, 380, -1, 50));
 
         jLabel11.setBackground(new java.awt.Color(255, 255, 255));
         jLabel11.setFont(new java.awt.Font("Segoe UI Symbol", 1, 24)); // NOI18N
         jLabel11.setForeground(new java.awt.Color(0, 51, 102));
         jLabel11.setText("Semántico");
-        jPanel1.add(jLabel11, new org.netbeans.lib.awtextra.AbsoluteConstraints(650, 240, 130, -1));
+        jPanel1.add(jLabel11, new org.netbeans.lib.awtextra.AbsoluteConstraints(650, 170, 130, -1));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -302,7 +302,11 @@ public class Main extends javax.swing.JFrame {
     public static ArrayList<TablaSimbolos> lexema = new ArrayList<TablaSimbolos>();
     
     private void btnLexicoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLexicoActionPerformed
-        lexico();
+        try {
+            lexico();
+        } catch(Exception ex){
+        
+        }
     }//GEN-LAST:event_btnLexicoActionPerformed
 
     private void btnGuardaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuardaActionPerformed
@@ -343,7 +347,11 @@ public class Main extends javax.swing.JFrame {
     
     private void btnAnaliza2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAnaliza2ActionPerformed
         // TODO add your handling code here:
-        lexico();
+        try {
+            lexico();
+        } catch(Exception ex){
+        
+        }
         Intermedio.operaciones = "";
         sintactico();
         semantico();
@@ -360,7 +368,7 @@ public class Main extends javax.swing.JFrame {
         
     private void lexico(){
         l= true;
-        String expresion = fuente.getText() + " ";
+        String expresion = fuente.getText();
         if (expresion.trim().length() == 0) {
             JOptionPane.showMessageDialog(null, "No se ha escrito el codigo fuente", "Lectura exitosa", JOptionPane.INFORMATION_MESSAGE);
             lexico.setText("");
