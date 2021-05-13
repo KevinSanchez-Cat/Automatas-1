@@ -44,6 +44,11 @@ public class Main extends javax.swing.JFrame {
         }catch(Exception e){
             //JOptionPane.showMessageDialog(null, e);
         }
+        
+        
+        
+        
+        
         fuente.setContentType("text/java");
         c.fuente.setContentType("text/java");
         c.optimizado.setContentType("text/java");
