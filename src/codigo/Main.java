@@ -10,17 +10,14 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java_cup.runtime.Symbol;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.JTableHeader;
+import jsyntaxpane.DefaultSyntaxKit;
 
 /**
  *
@@ -42,6 +39,14 @@ public class Main extends javax.swing.JFrame {
     public Main() {
         archivo = new File("Codigo.txt");
         initComponents();
+        try {
+            DefaultSyntaxKit.initKit();
+        }catch(Exception e){
+            //JOptionPane.showMessageDialog(null, e);
+        }
+        fuente.setContentType("text/java");
+        c.fuente.setContentType("text/java");
+        c.optimizado.setContentType("text/java");
         setLocationRelativeTo(null);
         lexico.setEditable(false);
         DefaultTableModel modelo = new DefaultTableModel(){
@@ -64,8 +69,8 @@ public class Main extends javax.swing.JFrame {
 //        header.setDefaultRenderer(new Encabezado());
 //        variables.setRowHeight(26);
 //        variables.setTableHeader(header);
-        NumeroLinea linea = new NumeroLinea(fuente);
-        jScrollPane2.setRowHeaderView(linea);
+//        NumeroLinea linea = new NumeroLinea(fuente);
+//        jScrollPane1.setRowHeaderView(linea);
     }
 
     /**
@@ -78,8 +83,6 @@ public class Main extends javax.swing.JFrame {
     private void initComponents() {
 
         jPanel1 = new javax.swing.JPanel();
-        jScrollPane2 = new javax.swing.JScrollPane();
-        fuente = new javax.swing.JTextArea();
         jScrollPane3 = new javax.swing.JScrollPane();
         lexico = new javax.swing.JTextArea();
         btnCarga = new javax.swing.JButton();
@@ -100,18 +103,13 @@ public class Main extends javax.swing.JFrame {
         objeto = new javax.swing.JTextArea();
         btnAnaliza3 = new javax.swing.JButton();
         jLabel11 = new javax.swing.JLabel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        fuente = new javax.swing.JEditorPane();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         jPanel1.setBackground(new java.awt.Color(162, 217, 245));
         jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
-
-        fuente.setColumns(20);
-        fuente.setFont(new java.awt.Font("SansSerif", 0, 17)); // NOI18N
-        fuente.setRows(5);
-        jScrollPane2.setViewportView(fuente);
-
-        jPanel1.add(jScrollPane2, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 10, 570, 550));
 
         lexico.setColumns(20);
         lexico.setFont(new java.awt.Font("SansSerif", 0, 17)); // NOI18N
@@ -261,6 +259,11 @@ public class Main extends javax.swing.JFrame {
         jLabel11.setText("Semántico");
         jPanel1.add(jLabel11, new org.netbeans.lib.awtextra.AbsoluteConstraints(650, 170, 130, -1));
 
+        fuente.setContentType("text/java"); // NOI18N
+        jScrollPane1.setViewportView(fuente);
+
+        jPanel1.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 0, 570, 560));
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -344,6 +347,7 @@ public class Main extends javax.swing.JFrame {
     }//GEN-LAST:event_btnAnaliza1ActionPerformed
     
     boolean l = true;
+    Codigo c = new Codigo();
     
     private void btnAnaliza2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAnaliza2ActionPerformed
         // TODO add your handling code here:
@@ -357,7 +361,10 @@ public class Main extends javax.swing.JFrame {
         semantico();
         Intermedio.temp  = 0;
         
+        c.fuente.setText(fuente.getText());
         
+        c.setVisible(true);
+        optimizarComentarios();
     }//GEN-LAST:event_btnAnaliza2ActionPerformed
 
     private void btnAnaliza3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAnaliza3ActionPerformed
@@ -365,11 +372,12 @@ public class Main extends javax.swing.JFrame {
 //        Intermedio.intermedio(lexema);
         objeto.setText(Intermedio.operaciones);
     }//GEN-LAST:event_btnAnaliza3ActionPerformed
-        
-    private void lexico(){
-        l= true;
-        String expresion = fuente.getText();
-        if (expresion.trim().length() == 0) {
+    
+    ArrayList<analisis.Lexema> lexemas;
+    private void lexico() {
+        l = true;
+        String expresion = fuente.getText() + " ";
+        /*  if (expresion.trim().length() == 0) {
             JOptionPane.showMessageDialog(null, "No se ha escrito el codigo fuente", "Lectura exitosa", JOptionPane.INFORMATION_MESSAGE);
             lexico.setText("");
         } else {
@@ -383,8 +391,51 @@ public class Main extends javax.swing.JFrame {
                 lexico.setText(cadena);
                 lexico.setForeground(new Color(25, 111, 61));
             }
+        }*/
+        analisis.Lexico analisisLexico = new analisis.Lexico(expresion, "+-=*&| {}()[]!?^/%;:,<>\n\t\r\b\f", "Tabla del automata general.xlsx");
+
+ 
+
+        lexemas = analisisLexico.analisisLexico();
+        String cad = "Lexema\tNombre\tToken\tRenglon\n";
+        for (int p = 0; p < lexemas.size(); p++) {
+            //textoMostrar += " " +  + "\t" +  + "\t" + lexemas.get(i).getNumToken() + "\t" + lexemas.get(i).getRenglon() + "\n";
+            cad += ""
+                    + lexemas.get(p).getLexema() + "\t"
+                    + "t" + String.valueOf(lexemas.get(p).getNumToken()) + "   ➡ \t"
+                    + lexemas.get(p).getNombreToken() + "    \t"
+                    + String.valueOf(lexemas.get(p).getRenglon()) + "\n";
+
+ 
+
         }
+        lexico.setText(cad);
+        lexico.setForeground(new Color(25, 111, 61));
     }
+    public void optimizarComentarios(){
+        ArrayList<analisis.Lexema> lista2=new ArrayList<>();
+        for (int j = 0; j < lexemas.size(); j++) {
+            if(!(lexemas.get(j).getNumToken()==59)||!(lexemas.get(j).getNumToken()==60)){
+                analisis.Lexema lx=new analisis.Lexema();
+                lx.setLexema(lexemas.get(j).getLexema());
+                lx.setNombreToken(lexemas.get(j).getNombreToken());
+                lx.setNumToken(lexemas.get(j).getNumToken());
+                lx.setRenglon(lexemas.get(j).getRenglon());
+                lista2.add(lx);
+            }
+        }
+        String optimizado = "";
+        for (int i = 0; i < lista2.size(); i++) {
+            optimizado += lista2.get(i).getLexema();
+            if (lista2.get(i).getNumToken() == 9 || lista2.get(i).getNumToken()== 10 || lista2.get(i).getNumToken()== 2) {
+                optimizado += "\n";
+            } else if (lista2.get(i).getNumToken() == 1 || lista2.get(i).getNumToken() == 16 || lista2.get(i).getNumToken() == 19 || lista2.get(i).getNumToken() == 21 || lista2.get(i).getNumToken() == 56){
+                optimizado += " ";
+            }
+        }
+        c.optimizado.setText(optimizado);
+    }
+    
     private void sintactico(){
         String expresion = fuente.getText() + " ";
         sintactico.setText("");
@@ -509,13 +560,13 @@ public class Main extends javax.swing.JFrame {
     private javax.swing.JButton btnLexico;
     private javax.swing.JButton btnLimpia;
     private javax.swing.JButton btnSintactico;
-    private javax.swing.JTextArea fuente;
+    private javax.swing.JEditorPane fuente;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JScrollPane jScrollPane5;

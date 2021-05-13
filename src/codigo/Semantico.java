@@ -49,7 +49,60 @@ public class Semantico {
      * @param cola cadena resultado
      * @return una cola con la notación posfija
      */
-    public ColaD posfijo(ColaD cola) {
+//    public ColaD posfijo(ColaD cola) {
+//
+//        ColaD pResultado = new ColaD();
+//        PilaD pOperadores = new PilaD();
+//        while (cola.getF() != null) {
+//            String s = cola.elimina(null).getS();
+//            if (isOperadorS(s)) {
+//                if (isOperador(s)) {
+//                    if (pOperadores.getTope() != null) {
+//                        String s2 = pOperadores.elimina(null).getS();
+//                        if (isOperador(s2)) {
+//                            if (prioridad(s2) >= prioridad(s)) {
+//                                pOperadores.inserta(new Nodo(s, -1), null);
+//                                pResultado.inserta(new Nodo(s2, -1), null);
+//                            } else if (prioridad(s2) < prioridad(s)) {
+//                                pOperadores.inserta(new Nodo(s2, -1), null);
+//                                pOperadores.inserta(new Nodo(s, -1), null);
+//                            } else {
+//                                pOperadores.inserta(new Nodo(s2, -1), null);
+//                                pOperadores.inserta(new Nodo(s, -1), null);
+//                            }
+//                        } else {
+//                            pOperadores.inserta(new Nodo(s2, -1), null);
+//                            pOperadores.inserta(new Nodo(s, -1), null);
+//                        }
+//                    } else {
+//                        pOperadores.inserta(new Nodo(s, -1), null);
+//                    }
+//                } else if (s.equals("(")) {
+//                    pOperadores.inserta(new Nodo(s, -1), null);
+//                } else if (s.equals(")")) {
+//                    while (pOperadores.getTope() != null) {
+//                        if (pOperadores.getTope().getS().equals("(")) {
+//                            pOperadores.elimina(null);
+//                            break;
+//                        } else {
+//                            String op = pOperadores.elimina(null).getS();
+//                            pResultado.inserta(new Nodo(op, -1), null);
+//                        }
+//                    }
+//                }
+//            } else {
+//                pResultado.inserta(new Nodo(s, -1), null);
+//            }
+//        }
+//        while (pOperadores.getTope() != null) {
+//            String op = pOperadores.elimina(null).getS();
+//            pResultado.inserta(new Nodo(op, -1), null);
+//        }
+//
+//        return pResultado;
+//    }
+
+     public ColaD posfijo(ColaD cola) {
 
         ColaD pResultado = new ColaD();
         PilaD pOperadores = new PilaD();
@@ -61,14 +114,15 @@ public class Semantico {
                         String s2 = pOperadores.elimina(null).getS();
                         if (isOperador(s2)) {
                             if (prioridad(s2) >= prioridad(s)) {
-                                pOperadores.inserta(new Nodo(s, -1), null);
+                               // pOperadores.inserta(new Nodo(s, -1), null);
                                 pResultado.inserta(new Nodo(s2, -1), null);
-                            } else if (prioridad(s2) < prioridad(s)) {
+                                insertaPOperdadores(s, pOperadores, pResultado);
+                            } else if (prioridad(s) > prioridad(s2)) {
                                 pOperadores.inserta(new Nodo(s2, -1), null);
                                 pOperadores.inserta(new Nodo(s, -1), null);
                             } else {
-                                pOperadores.inserta(new Nodo(s2, -1), null);
-                                pOperadores.inserta(new Nodo(s, -1), null);
+                                pResultado.inserta(new Nodo(s, -1), null);
+                                pResultado.inserta(new Nodo(s2, -1), null);
                             }
                         } else {
                             pOperadores.inserta(new Nodo(s2, -1), null);
@@ -102,6 +156,30 @@ public class Semantico {
         return pResultado;
     }
 
+    public void insertaPOperdadores(String s, PilaD pOperadores, ColaD pResultado) {
+        if (pOperadores.getTope() != null) {
+            String s2 = pOperadores.elimina(null).getS();
+            if (isOperador(s2)) {
+                if (prioridad(s2) >= prioridad(s)) {
+                    pOperadores.inserta(new Nodo(s, -1), null);
+                    pResultado.inserta(new Nodo(s2, -1), null);
+                    
+                } else if (prioridad(s) > prioridad(s2)) {
+                    pOperadores.inserta(new Nodo(s2, -1), null);
+                    pOperadores.inserta(new Nodo(s, -1), null);
+                } else {
+                    pResultado.inserta(new Nodo(s, -1), null);
+                    pResultado.inserta(new Nodo(s2, -1), null);
+                }
+            } else {
+                pOperadores.inserta(new Nodo(s2, -1), null);
+                pOperadores.inserta(new Nodo(s, -1), null);
+            }
+        } else {
+            pOperadores.inserta(new Nodo(s, -1), null);
+        }
+    }
+    
     /**
      * Método que verifica que el lexema sea un operador o no
      *

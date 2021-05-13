@@ -14,7 +14,6 @@ import java.util.ArrayList;
 public class AnalisisLexico {
     
     public static boolean separa(String palabra, String cadena) {
-        
         if (cadena.length() > 0) {
             String simbolo = cadena.substring(0, 1);
             if (simbolo.equals(" ") && palabra.length() > 0) {                      // " "
