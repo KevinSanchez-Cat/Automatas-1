@@ -5,6 +5,8 @@
  */
 package codigo;
 
+import analisis.Lexema;
+import static codigo.AnalisisSemantico.tablaSimbolos;
 import java.awt.Color;
 import java.io.File;
 import java.io.FileInputStream;
@@ -28,49 +30,34 @@ public class Main extends javax.swing.JFrame {
     /**
      * Creates new form Main
      */
-    
     public static String cadena;
     File archivo;
     FileInputStream input;
     FileOutputStream output;
     Boolean error;
     TablaSemantico t = new TablaSemantico();
-    
+
     public Main() {
         archivo = new File("Codigo.txt");
         initComponents();
         try {
             DefaultSyntaxKit.initKit();
-        }catch(Exception e){
+        } catch (Exception e) {
             //JOptionPane.showMessageDialog(null, e);
         }
         fuente.setContentType("text/java");
-        c.fuente.setContentType("text/java");
-        c.optimizado.setContentType("text/java");
+        Codigo.fuente.setContentType("text/java");
+        Codigo.optimizado.setContentType("text/java");
         setLocationRelativeTo(null);
         lexico.setEditable(false);
-        DefaultTableModel modelo = new DefaultTableModel(){
+        DefaultTableModel modelo = new DefaultTableModel() {
             @Override
-            public boolean isCellEditable(int row, int column){
+            public boolean isCellEditable(int row, int column) {
                 return false;
             }
-        }; 
-        
+        };
+
         t.setVisible(true);
-        
-        // Columnas de la tabla
-//        modelo.addColumn("Tipo");
-//        modelo.addColumn("Variable");
-//        modelo.addColumn("Valor");
-//        modelo.addColumn("Unica");
-//        modelo.addColumn("Inicializada");
-//        variables.setModel(modelo);
-//        JTableHeader header = variables.getTableHeader(); 
-//        header.setDefaultRenderer(new Encabezado());
-//        variables.setRowHeight(26);
-//        variables.setTableHeader(header);
-//        NumeroLinea linea = new NumeroLinea(fuente);
-//        jScrollPane1.setRowHeaderView(linea);
     }
 
     /**
@@ -105,6 +92,8 @@ public class Main extends javax.swing.JFrame {
         jLabel11 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         fuente = new javax.swing.JEditorPane();
+        jLabel12 = new javax.swing.JLabel();
+        btnAnaliza4 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -116,7 +105,7 @@ public class Main extends javax.swing.JFrame {
         lexico.setRows(5);
         jScrollPane3.setViewportView(lexico);
 
-        jPanel1.add(jScrollPane3, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 570, 570, 150));
+        jPanel1.add(jScrollPane3, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 570, 560, 150));
 
         btnCarga.setBackground(new java.awt.Color(255, 255, 255));
         btnCarga.setFont(new java.awt.Font("Segoe UI Symbol", 1, 18)); // NOI18N
@@ -231,8 +220,8 @@ public class Main extends javax.swing.JFrame {
         jLabel10.setBackground(new java.awt.Color(255, 255, 255));
         jLabel10.setFont(new java.awt.Font("Segoe UI Symbol", 1, 24)); // NOI18N
         jLabel10.setForeground(new java.awt.Color(0, 51, 102));
-        jLabel10.setText("Intermedio");
-        jPanel1.add(jLabel10, new org.netbeans.lib.awtextra.AbsoluteConstraints(650, 340, 130, -1));
+        jLabel10.setText("Optimizado");
+        jPanel1.add(jLabel10, new org.netbeans.lib.awtextra.AbsoluteConstraints(650, 550, 140, -1));
 
         objeto.setColumns(20);
         objeto.setFont(new java.awt.Font("SansSerif", 0, 17)); // NOI18N
@@ -262,7 +251,25 @@ public class Main extends javax.swing.JFrame {
         fuente.setContentType("text/java"); // NOI18N
         jScrollPane1.setViewportView(fuente);
 
-        jPanel1.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 0, 570, 560));
+        jPanel1.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 0, 560, 560));
+
+        jLabel12.setBackground(new java.awt.Color(255, 255, 255));
+        jLabel12.setFont(new java.awt.Font("Segoe UI Symbol", 1, 24)); // NOI18N
+        jLabel12.setForeground(new java.awt.Color(0, 51, 102));
+        jLabel12.setText("Intermedio");
+        jPanel1.add(jLabel12, new org.netbeans.lib.awtextra.AbsoluteConstraints(650, 340, 130, -1));
+
+        btnAnaliza4.setBackground(new java.awt.Color(255, 255, 255));
+        btnAnaliza4.setFont(new java.awt.Font("Segoe UI Symbol", 1, 18)); // NOI18N
+        btnAnaliza4.setForeground(new java.awt.Color(0, 51, 102));
+        btnAnaliza4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/iconfinder_745_Business_gear_management_operation_process_Business_Management_4178928 (1).png"))); // NOI18N
+        btnAnaliza4.setToolTipText("Semantico");
+        btnAnaliza4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAnaliza4ActionPerformed(evt);
+            }
+        });
+        jPanel1.add(btnAnaliza4, new org.netbeans.lib.awtextra.AbsoluteConstraints(690, 590, -1, 50));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -285,7 +292,7 @@ public class Main extends javax.swing.JFrame {
         try {
             input = new FileInputStream(archivo);
             int letra;
-            while((letra = input.read()) != -1){
+            while ((letra = input.read()) != -1) {
                 char caracter = (char) letra;
                 a += caracter;
             }
@@ -298,23 +305,23 @@ public class Main extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(null, "El archivo de texto se encuentra vacío", "Inténtelo de nuevo", JOptionPane.INFORMATION_MESSAGE);
             lexico.setText("");
         } else {
-            fuente.setText(a);            
+            fuente.setText(a);
         }
     }//GEN-LAST:event_btnCargaActionPerformed
-    
+
     public static ArrayList<TablaSimbolos> lexema = new ArrayList<TablaSimbolos>();
-    
+
     private void btnLexicoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLexicoActionPerformed
         try {
-            lexico();
-        } catch(Exception ex){
-        
+            lexico(fuente.getText());
+        } catch (Exception ex) {
+
         }
     }//GEN-LAST:event_btnLexicoActionPerformed
 
     private void btnGuardaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuardaActionPerformed
         try {
-            output  = new FileOutputStream(archivo);
+            output = new FileOutputStream(archivo);
             byte[] txt = fuente.getText().getBytes();
             output.write(txt);
             JOptionPane.showMessageDialog(null, "Se ha guardado el programa fuente", "Escritura exitosa", JOptionPane.INFORMATION_MESSAGE);
@@ -332,39 +339,72 @@ public class Main extends javax.swing.JFrame {
 
     }//GEN-LAST:event_btnLimpiaActionPerformed
 
-    public static void notificar_er(String cad){
-        sintactico.append(cad+"\n\n");
+    public static void notificar_er(String cad) {
+        sintactico.append(cad + "\n\n");
     }
-    
+
     private void btnSintacticoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSintacticoActionPerformed
-        sintactico();
+        sintactico(fuente.getText());
     }//GEN-LAST:event_btnSintacticoActionPerformed
 
     private void btnAnaliza1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAnaliza1ActionPerformed
         // TODO add your handling code here:
-        sintactico();
+        sintactico(fuente.getText());
         semantico();
     }//GEN-LAST:event_btnAnaliza1ActionPerformed
-    
+
     boolean l = true;
     Codigo c = new Codigo();
-    
+    HiloTemporizador h1;
     private void btnAnaliza2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAnaliza2ActionPerformed
         // TODO add your handling code here:
-        try {
-            lexico();
-        } catch(Exception ex){
-        
-        }
+        h1  = new HiloTemporizador(0, 0, 0, 0);
+        h1.start();
+        lexico(fuente.getText());
         Intermedio.operaciones = "";
-        sintactico();
+        sintactico(fuente.getText());
         semantico();
-        Intermedio.temp  = 0;
+        Intermedio.temp = 0;
+        Codigo.fuente.setText(fuente.getText());
+        h1.stop();
+        String tiempo = h1.getMin() + ":" + h1.getSeg() + ":" + h1.getMilisegundos();
         
-        c.fuente.setText(fuente.getText());
+        String lex = lexico.getText(), sint = sintactico.getText(), sem = semantico.getText(), inter  = objeto.getText();
         
         c.setVisible(true);
-        optimizarComentarios();
+        h1  = new HiloTemporizador(0, 0, 0, 0);
+        h1.start();
+        optimizacion();
+        lexico(Codigo.optimizado.getText());
+        Intermedio.operaciones = "";
+        sintactico(Codigo.optimizado.getText());
+        semantico();
+        h1.stop();
+        
+        lexico.setText(lex);
+        sintactico.setText(sint);
+        semantico.setText(sem);
+        objeto.setText(inter);
+        
+        String tiempo2 = h1.getMin() + ":" + h1.getSeg() + ":" + h1.getMilisegundos();
+        File fuenteTxt = new File("Fuente.txt");
+        File optimizadoTxt = new File("Optimizado.txt");
+        try {
+            output = new FileOutputStream(fuenteTxt);
+            byte[] txt = fuente.getText().getBytes();
+            output.write(txt);
+            output = new FileOutputStream(optimizadoTxt);
+            txt = Codigo.optimizado.getText().getBytes();
+            output.write(txt);
+            Codigo.txtCodigoFuente.setText("Tiempo de ejecución " + tiempo + "\nTamaño de archivo " + fuenteTxt.length() + " bytes");
+            Codigo.txtCodigoOptimizado.setText("Tiempo de ejecución " + tiempo2 + "\nTamaño de archivo " +optimizadoTxt.length() + " bytes");
+            JOptionPane.showMessageDialog(null, "Se ha guardado el código fuente y optimizado", "Escritura exitosa", JOptionPane.INFORMATION_MESSAGE);
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
     }//GEN-LAST:event_btnAnaliza2ActionPerformed
 
     private void btnAnaliza3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAnaliza3ActionPerformed
@@ -372,11 +412,41 @@ public class Main extends javax.swing.JFrame {
 //        Intermedio.intermedio(lexema);
         objeto.setText(Intermedio.operaciones);
     }//GEN-LAST:event_btnAnaliza3ActionPerformed
-    
+
+    private void btnAnaliza4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAnaliza4ActionPerformed
+        h1  = new HiloTemporizador(0, 0, 0, 0);
+        h1.start();
+        lexico(fuente.getText());
+        lexico.setText("");
+        c.setVisible(true);
+        optimizacion();
+        h1.stop();
+        Codigo.fuente.setText(fuente.getText());
+        String tiempo2 = h1.getMin() + ":" + h1.getSeg() + ":" + h1.getMilisegundos();
+        File fuenteTxt = new File("Fuente.txt");
+        File optimizadoTxt = new File("Optimizado.txt");
+        try {
+            output = new FileOutputStream(fuenteTxt);
+            byte[] txt = fuente.getText().getBytes();
+            output.write(txt);
+            output = new FileOutputStream(optimizadoTxt);
+            txt = Codigo.optimizado.getText().getBytes();
+            output.write(txt);
+            Codigo.txtCodigoFuente.setText("Tiempo de ejecución " + tiempo2 + "\nTamaño de archivo " + fuenteTxt.length() + " bytes");
+            Codigo.txtCodigoOptimizado.setText("Tiempo de ejecución " + tiempo2 + "\nTamaño de archivo " +optimizadoTxt.length() + " bytes");
+            JOptionPane.showMessageDialog(null, "Se ha guardado el código fuente y optimizado", "Escritura exitosa", JOptionPane.INFORMATION_MESSAGE);
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_btnAnaliza4ActionPerformed
+
     ArrayList<analisis.Lexema> lexemas;
-    private void lexico() {
+
+    private void lexico(String fuente) {
         l = true;
-        String expresion = fuente.getText() + " ";
+        String expresion = fuente + " ";
         /*  if (expresion.trim().length() == 0) {
             JOptionPane.showMessageDialog(null, "No se ha escrito el codigo fuente", "Lectura exitosa", JOptionPane.INFORMATION_MESSAGE);
             lexico.setText("");
@@ -394,8 +464,6 @@ public class Main extends javax.swing.JFrame {
         }*/
         analisis.Lexico analisisLexico = new analisis.Lexico(expresion, "+-=*&| {}()[]!?^/%;:,<>\n\t\r\b\f", "Tabla del automata general.xlsx");
 
- 
-
         lexemas = analisisLexico.analisisLexico();
         String cad = "Lexema\tNombre\tToken\tRenglon\n";
         for (int p = 0; p < lexemas.size(); p++) {
@@ -406,49 +474,24 @@ public class Main extends javax.swing.JFrame {
                     + lexemas.get(p).getNombreToken() + "    \t"
                     + String.valueOf(lexemas.get(p).getRenglon()) + "\n";
 
- 
-
         }
         lexico.setText(cad);
         lexico.setForeground(new Color(25, 111, 61));
     }
-    public void optimizarComentarios(){
-        ArrayList<analisis.Lexema> lista2=new ArrayList<>();
-        for (int j = 0; j < lexemas.size(); j++) {
-            if(!(lexemas.get(j).getNumToken()==59)||!(lexemas.get(j).getNumToken()==60)){
-                analisis.Lexema lx=new analisis.Lexema();
-                lx.setLexema(lexemas.get(j).getLexema());
-                lx.setNombreToken(lexemas.get(j).getNombreToken());
-                lx.setNumToken(lexemas.get(j).getNumToken());
-                lx.setRenglon(lexemas.get(j).getRenglon());
-                lista2.add(lx);
-            }
-        }
-        String optimizado = "";
-        for (int i = 0; i < lista2.size(); i++) {
-            optimizado += lista2.get(i).getLexema();
-            if (lista2.get(i).getNumToken() == 9 || lista2.get(i).getNumToken()== 10 || lista2.get(i).getNumToken()== 2) {
-                optimizado += "\n";
-            } else if (lista2.get(i).getNumToken() == 1 || lista2.get(i).getNumToken() == 16 || lista2.get(i).getNumToken() == 19 || lista2.get(i).getNumToken() == 21 || lista2.get(i).getNumToken() == 56){
-                optimizado += " ";
-            }
-        }
-        c.optimizado.setText(optimizado);
-    }
-    
-    private void sintactico(){
-        String expresion = fuente.getText() + " ";
+
+    private void sintactico(String fuente) {
+        String expresion = fuente + " ";
         sintactico.setText("");
         lexema.clear();
         if (expresion.trim().length() == 0) {
             JOptionPane.showMessageDialog(null, "No se ha escrito el codigo fuente", "Lectura exitosa", JOptionPane.INFORMATION_MESSAGE);
             lexico.setText("");
         } else {
-            String ST = fuente.getText();
+            String ST = fuente;
             Sintax s = new Sintax(new codigo.LexerCup(new StringReader(ST)));
             try {
                 s.parse();
-                if (sintactico.getText().equals("")){
+                if (sintactico.getText().equals("")) {
                     sintactico.append("Análisis realizado correctamente");
                     sintactico.setForeground(new Color(25, 111, 61));
                 } else {
@@ -462,29 +505,37 @@ public class Main extends javax.swing.JFrame {
             }
         }
     }
-    private void semantico(){
+
+    private void semantico() {
         semantico.setText("");
         String expresion = fuente.getText() + " ";
         if (expresion.trim().length() == 0) {
             JOptionPane.showMessageDialog(null, "No se ha escrito el codigo fuente", "Lectura exitosa", JOptionPane.INFORMATION_MESSAGE);
             semantico.setText("");
         } else {
-            AnalisisSemantico sem = new AnalisisSemantico();
-            sem.mensajesError = "";
-            sem.analizar(lexema);
-            if (sem.mensajesError.equals("")) {
+            AnalisisSemantico.mensajesError = "";
+            for (int i = 0; i <lexema.size(); i++) {
+                System.out.println(lexema.get(i).getLexema()+" "+lexema.get(i).getNumToken());
+                if(lexemas.get(i).getLexema().equals("-")){
+                    //Numero - Nmumero
+                    // = - Numero
+                }
+            }
+            
+            AnalisisSemantico.analizar(lexema);
+            if (AnalisisSemantico.mensajesError.equals("")) {
                 semantico.append("Análisis realizado correctamente");
                 semantico.setForeground(new Color(25, 111, 61));
-            } else{
+            } else {
                 semantico.setForeground(Color.RED);
-                semantico.setText(sem.mensajesError);
+                semantico.setText(AnalisisSemantico.mensajesError);
             }
-            DefaultTableModel modelo = new DefaultTableModel(){
+            DefaultTableModel modelo = new DefaultTableModel() {
                 @Override
-                public boolean isCellEditable(int row, int column){
+                public boolean isCellEditable(int row, int column) {
                     return false;
                 }
-            }; 
+            };
 
             // Columnas de la tabla
             modelo.addColumn("Tipo");
@@ -493,18 +544,18 @@ public class Main extends javax.swing.JFrame {
             modelo.addColumn("Unica");
             modelo.addColumn("Inicializada");
             String unica, inicializada;
-            for (int i = 0; i < sem.tablaSimbolos.size(); i++) {
-                Object fila [] = new Object[5];
-                fila[0] = sem.tablaSimbolos.get(i).getTipo();
-                fila[1] = sem.tablaSimbolos.get(i).getVariable();
-                fila[2] = sem.tablaSimbolos.get(i).getValor();
-                if (sem.tablaSimbolos.get(i).isUnica()) {
+            for (int i = 0; i < AnalisisSemantico.tablaSimbolos.size(); i++) {
+                Object fila[] = new Object[5];
+                fila[0] = AnalisisSemantico.tablaSimbolos.get(i).getTipo();
+                fila[1] = AnalisisSemantico.tablaSimbolos.get(i).getVariable();
+                fila[2] = AnalisisSemantico.tablaSimbolos.get(i).getValor();
+                if (AnalisisSemantico.tablaSimbolos.get(i).isUnica()) {
                     unica = "Si";
                 } else {
                     unica = "No";
                 }
                 fila[3] = unica;
-                if (sem.tablaSimbolos.get(i).isInicializada()) {
+                if (AnalisisSemantico.tablaSimbolos.get(i).isInicializada()) {
                     inicializada = "Si";
                 } else {
                     inicializada = "No";
@@ -512,10 +563,10 @@ public class Main extends javax.swing.JFrame {
                 fila[4] = inicializada;
                 modelo.addRow(fila);
             }
-            t.variables.setModel(modelo);
-        }   
+            TablaSemantico.variables.setModel(modelo);
+        }
     }
-    
+
     /**
      * @param args the command line arguments
      */
@@ -532,22 +583,16 @@ public class Main extends javax.swing.JFrame {
                     break;
                 }
             }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(Main.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(Main.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(Main.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | javax.swing.UnsupportedLookAndFeelException ex) {
             java.util.logging.Logger.getLogger(Main.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
 
+        //</editor-fold>
+
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new Main().setVisible(true);
-            }
+        java.awt.EventQueue.invokeLater(() -> {
+            new Main().setVisible(true);
         });
     }
 
@@ -555,6 +600,7 @@ public class Main extends javax.swing.JFrame {
     private javax.swing.JButton btnAnaliza1;
     private javax.swing.JButton btnAnaliza2;
     private javax.swing.JButton btnAnaliza3;
+    private javax.swing.JButton btnAnaliza4;
     private javax.swing.JButton btnCarga;
     private javax.swing.JButton btnGuarda;
     private javax.swing.JButton btnLexico;
@@ -563,6 +609,7 @@ public class Main extends javax.swing.JFrame {
     private javax.swing.JEditorPane fuente;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
+    private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JPanel jPanel1;
@@ -576,4 +623,677 @@ public class Main extends javax.swing.JFrame {
     public static javax.swing.JTextArea semantico;
     private static javax.swing.JTextArea sintactico;
     // End of variables declaration//GEN-END:variables
+
+    public void optimizacion() {
+
+        ArrayList<analisis.Lexema> lista2 = new ArrayList<>();
+        //Tecnica 1 quitar comentarios
+        lista2 = optimizaComentarios(lista2);
+        //Tecnica 2 Estructura
+        lista2 = optimizarEstructura(lista2);
+        //Tecnica 3 Reduccion Operaciones
+        lista2 = optimizarVariablesOp(lista2);
+        //Tecnica 4 Variables no usadas
+        lista2 = optimizaVariablesSinUso(lista2);
+        //Tecnica 5 Reduccion Operaciones Revision 2
+        lista2 = optimizarVariablesOp(lista2);
+        //Tecnica 6 Variables no usadas Revision 2
+        lista2 = optimizaVariablesSinUso(lista2);
+        //Tecnica 7 Asignaciones por declaraciones, si no hubieron cambios entre una asignacion y otra o no la variable no se ocupo entre una asignacion y otra
+        lista2 = optimizaAsignacionesInnecesarias(lista2);
+        //Tecnica 8 Sustitucion de varibles
+      // lista2 = optimizaOperaciones(lista2);
+        //Tecnica 8 Quitar espacios y tabuladores
+        imprimeOptimizacion(lista2);
+    }
+
+    private ArrayList<Lexema> optimizaAsignacionesInnecesarias(ArrayList<Lexema> lista2) {
+// si no hubieron cambios entre una asignacion y otra o no la variable no se ocupo entre una asignacion y otra
+        ArrayList<Lexema> arrLex = new ArrayList<>();
+//Agrega variables
+        for (int i = 0; i < lista2.size(); i++) {
+            if (lista2.get(i).getNumToken() == 1) {
+                Lexema lx = new Lexema();
+                lx.setNombreToken(lista2.get(i).getLexema());
+                lx.setLexema(lista2.get(i + 1).getLexema());
+                if (lista2.get(i + 2).getLexema().equals("=")) {
+                    lx.setRenglon(1);
+                } else {
+                    lx.setRenglon(0);
+                }
+                arrLex.add(lx);
+            }
+        }
+//En las variables que se inicializan despues de ser declaradas, poner en su asignacion la declaracion.
+//El tipo antes y eliminar su declaracion;
+
+        for (int i = 0; i < arrLex.size(); i++) {
+            for (int j = 0; j < lista2.size(); j++) {
+                if (arrLex.get(i).getLexema().equals(lista2.get(j).getLexema())) {
+                    if (arrLex.get(i).getRenglon() == 0) {
+                        Lexema aux = new Lexema();
+                        aux.setLexema(arrLex.get(i).getLexema());
+                        aux.setNombreToken(arrLex.get(i).getNombreToken());
+                        aux.setNumToken(arrLex.get(i).getNumToken());
+                        aux.setRenglon(1);
+                        if (lista2.get(j - 1).getLexema().equals("int") || lista2.get(j - 1).getLexema().equals("float") || lista2.get(j - 1).getLexema().equals("boolean") || lista2.get(j - 1).getLexema().equals("String")) {
+//Eliminar
+                            lista2.remove(j - 1);//tipo
+                            lista2.remove(j - 1);//lexema
+                            lista2.remove(j - 1);//;
+                        }
+
+                    }
+                }
+            }
+        }
+
+        for (int i = 0; i < arrLex.size(); i++) {
+            for (int j = 0; j < lista2.size(); j++) {
+                if (arrLex.get(i).getLexema().equals(lista2.get(j).getLexema())) {
+                    if (arrLex.get(i).getRenglon() == 0) {
+                        Lexema aux = new Lexema();
+                        aux.setLexema(arrLex.get(i).getNombreToken());
+                        aux.setNombreToken("Tipo de dato");
+                        aux.setNumToken(1);
+                        lista2.add(j, aux);
+                        arrLex.get(i).setRenglon(1);
+                        break;
+                    }
+                }
+            }
+        }
+// //buscar a partir del este punto su primera asignacion para declarar
+// for (int k = j; k < lista2.size(); k++) {
+// if (arrLex.get(i).getLexema().equals(lista2.get(k).getLexema())) {
+// Lexema tipo=new Lexema();
+// tipo.setLexema(aux.getNombreToken());
+// lista2.add(k-1,tipo);
+// break;
+// }
+// }
+
+        return lista2;
+    }
+    
+    public ArrayList<analisis.Lexema> optimizaComentarios(ArrayList<analisis.Lexema> lista2) {
+        for (int j = 0; j < lexemas.size(); j++) {
+            if ((lexemas.get(j).getNumToken() == 59) || (lexemas.get(j).getNumToken() == 60)) {
+
+            } else {
+                analisis.Lexema lx = new analisis.Lexema();
+                lx.setLexema(lexemas.get(j).getLexema());
+                lx.setNombreToken(lexemas.get(j).getNombreToken());
+                lx.setNumToken(lexemas.get(j).getNumToken());
+                lx.setRenglon(lexemas.get(j).getRenglon());
+                lista2.add(lx);
+            }
+        }
+        return lista2;
+    }
+
+    public void imprimeOptimizacion(ArrayList<analisis.Lexema> lista2) {
+        String optimizado = "";
+        for (int i = 0; i < lista2.size(); i++) {
+            optimizado += lista2.get(i).getLexema();
+            if (lista2.get(i).getNumToken() == 9 || lista2.get(i).getNumToken() == 10 || lista2.get(i).getNumToken() == 2) {
+                optimizado += "\n";
+            } else if (lista2.get(i).getNumToken() == 1 || lista2.get(i).getNumToken() == 16 || lista2.get(i).getNumToken() == 19 || lista2.get(i).getNumToken() == 21 || lista2.get(i).getNumToken() == 56) {
+                optimizado += " ";
+            }
+        }
+        Codigo.optimizado.setText(optimizado);
+    }
+
+    private ArrayList<Lexema> optimizaOperaciones(ArrayList<Lexema> lista2) {
+        for (int i = 0; i < lista2.size(); i++) {
+            if (lista2.get(i).getNumToken() == 53) {
+                i++;
+                int renglon = 0;
+                ArrayList<String> arrInt = new ArrayList<>();
+                boolean bandera = true;
+                while (bandera) {
+                    if (lista2.get(i).getNumToken() == 2 || lista2.get(i).getNumToken() == 15) {
+                        bandera = false;
+                    } else {
+
+                        if (lista2.get(i).getNumToken() == 50) {
+                            for (int j = 0; j < tablaSimbolos.size(); j++) {
+                                if (lista2.get(i).getLexema().equals(tablaSimbolos.get(j).getVariable())) {
+                                    arrInt.add(tablaSimbolos.get(j).getValor());
+                                    break;
+                                }
+                            }
+
+                        } else {
+                            arrInt.add(lista2.get(i).getLexema());
+                        }
+                        renglon = lista2.get(i).getRenglon();
+                        lista2.remove(i);
+                    }
+
+                }
+                String valor = Semantico.conversionArrayCola(arrInt); //RETORNA EL VALOR DE LA OPERACION
+                //  String tipoDatoValor = Semantico.tipoDato(valor); //RETORNA EL TIPO DE DATO DEL VALOR
+                Lexema ls = new Lexema();
+                ls.setLexema(valor);
+                ls.setNombreToken("Operacion");
+                ls.setRenglon(renglon);
+                ls.setNumToken(200);
+                lista2.add(i, ls);
+            }
+
+        }
+
+        return lista2;
+    }
+
+    public ArrayList<Lexema> optimizarVariablesOp(ArrayList<Lexema> lista2) {
+        //Repaso 1: Solo operables
+        for (int i = 0; i < lista2.size(); i++) {
+            if (lista2.get(i).getNumToken() == 53) {
+                int index = i + 1;
+                ArrayList<Integer> indexs = new ArrayList<>();
+                boolean n = true;
+                ArrayList<String> str = new ArrayList<>();
+                int k = i + 1;
+                while (lista2.get(k).getNumToken() != 2 && n) {
+                    if (lista2.get(k).getNumToken() == 50) {
+                        n = false;
+                        break;
+                    } else {
+                        str.add(lista2.get(k).getLexema());
+                        indexs.add(k);
+                    }
+                    k++;
+                }
+                if (n == true) {
+                    String res = Semantico.conversionArrayCola(str);
+                    String tipo = Semantico.tipoDato(res);
+                    for (int j = 0; j < indexs.size() - 1; j++) {
+                        lista2.remove(index);
+                    }
+                    Lexema ls = new Lexema();
+                    ls.setLexema(res);
+                    switch (tipo) {
+                        case "INTEGER":
+                            ls.setNumToken(51);
+                            break;
+                        case "FLOAT":
+                            ls.setNumToken(52);
+                            break;
+                        case "BOOLEAN":
+                            if (res.equals("true")) {
+                                ls.setNumToken(22);
+                            } else {
+                                ls.setNumToken(23);
+                            }
+                            break;
+                        default:
+                            ls.setNumToken(53);
+                            break;
+                    }
+                    lista2.set(index, ls);
+                } else {
+                    indexs.clear();
+                }
+            }
+        }
+
+        //Repaso 2: Sustituir sumas
+        for (int i = 0; i < lista2.size(); i++) {
+            if (lista2.get(i).getLexema().equals("+") || lista2.get(i).getLexema().equals("-")) {
+                int index2 = i - 1;
+                //Hacia la izquierda
+                if (lista2.get(i - 1).getNumToken() == 50) {
+
+                } else {
+                    if (lista2.get(i - 2).getNumToken() == 53 || lista2.get(i - 2).getNumToken() == 7 || lista2.get(i - 2).getLexema().equals("+") || lista2.get(i - 2).getLexema().equals("-")) {
+                        //Hacia la derecha
+                        if (lista2.get(i + 1).getNumToken() == 50) {
+
+                        } else {
+                            if (lista2.get(i + 2).getNumToken() == 15 || lista2.get(i + 2).getNumToken() == 8 || lista2.get(i + 2).getNumToken() == 2 || lista2.get(i + 2).getLexema().equals("+") || lista2.get(i + 2).getLexema().equals("-")) {
+                                //Si
+                                int op1 = Integer.parseInt(lista2.get(i - 1).getLexema());
+                                int op2 = Integer.parseInt(lista2.get(i + 1).getLexema());
+                                int result;
+                                if (lista2.get(i).getLexema().equals("+")) {
+
+                                    result = op1 + op2;
+                                } else {
+
+                                    result = op1 - op2;
+                                }
+                                Lexema ls2 = new Lexema();
+                                ls2.setLexema(String.valueOf(result));
+                                ls2.setNumToken(51);
+                                lista2.set(index2, ls2);
+                                lista2.remove(index2 + 1);
+                                lista2.remove(index2 + 1);
+                                i = 0;
+                            } else {
+
+                            }
+
+                        }
+
+                    } else {
+
+                    }
+                }
+            }
+
+        }
+
+        //Repaso 3: Sustituir Multiplicaciones
+        for (int i = 0; i < lista2.size(); i++) {
+            if (lista2.get(i).getLexema().equals("*") || lista2.get(i).getLexema().equals("/")) {
+                int index2 = i - 1;
+                //Hacia la izquierda
+                if (lista2.get(i - 1).getNumToken() == 50) {
+
+                } else {
+                    if (lista2.get(i - 2).getNumToken() == 53 || lista2.get(i - 2).getNumToken() == 7 || lista2.get(i - 2).getLexema().equals("+") || lista2.get(i - 2).getLexema().equals("-") || lista2.get(i - 2).getLexema().equals("/") || lista2.get(i - 2).getLexema().equals("*")) {
+                        //Hacia la derecha
+                        if (lista2.get(i + 1).getNumToken() == 50) {
+
+                        } else {
+                            if (lista2.get(i + 2).getNumToken() == 15 || lista2.get(i + 2).getNumToken() == 8 || lista2.get(i + 2).getNumToken() == 2 || lista2.get(i + 2).getLexema().equals("+") || lista2.get(i + 2).getLexema().equals("-") || lista2.get(i + 2).getLexema().equals("/") || lista2.get(i + 2).getLexema().equals("*")) {
+                                //Si
+                                int op1 = Integer.parseInt(lista2.get(i - 1).getLexema());
+                                int op2 = Integer.parseInt(lista2.get(i + 1).getLexema());
+                                int result;
+                                if (lista2.get(i).getLexema().equals("*")) {
+
+                                    result = op1 * op2;
+                                } else {
+
+                                    result = op1 / op2;
+                                }
+                                Lexema ls2 = new Lexema();
+                                ls2.setLexema(String.valueOf(result));
+                                ls2.setNumToken(51);
+                                lista2.set(index2, ls2);
+                                lista2.remove(index2 + 1);
+                                lista2.remove(index2 + 1);
+                                i = 0;
+                            } else {
+
+                            }
+
+                        }
+
+                    } else {
+
+                    }
+                }
+            }
+
+        }
+        //Resapo 4 : sumas 
+        for (int i = 0; i < lista2.size(); i++) {
+            if (lista2.get(i).getLexema().equals("+") || lista2.get(i).getLexema().equals("-")) {
+                int index2 = i - 1;
+                //Hacia la izquierda
+                if (lista2.get(i - 1).getNumToken() == 50) {
+
+                } else {
+                    if (lista2.get(i - 2).getNumToken() == 53 || lista2.get(i - 2).getNumToken() == 7 || lista2.get(i - 2).getLexema().equals("+") || lista2.get(i - 2).getLexema().equals("-")) {
+                        //Hacia la derecha
+                        if (lista2.get(i + 1).getNumToken() == 50) {
+
+                        } else {
+                            if (lista2.get(i + 2).getNumToken() == 15 || lista2.get(i + 2).getNumToken() == 8 || lista2.get(i + 2).getNumToken() == 2 || lista2.get(i + 2).getLexema().equals("+") || lista2.get(i + 2).getLexema().equals("-")) {
+                                //Si
+                                int op1 = Integer.parseInt(lista2.get(i - 1).getLexema());
+                                int op2 = Integer.parseInt(lista2.get(i + 1).getLexema());
+                                int result;
+                                if (lista2.get(i).getLexema().equals("+")) {
+
+                                    result = op1 + op2;
+                                } else {
+
+                                    result = op1 - op2;
+                                }
+                                Lexema ls2 = new Lexema();
+                                ls2.setLexema(String.valueOf(result));
+                                ls2.setNumToken(51);
+                                lista2.set(index2, ls2);
+                                lista2.remove(index2 + 1);
+                                lista2.remove(index2 + 1);
+                                i = 0;
+                            } else {
+
+                            }
+
+                        }
+
+                    } else {
+
+                    }
+                }
+            }
+
+        }
+
+        return lista2;
+    }
+
+    public ArrayList<Lexema> optimizarEstructura(ArrayList<Lexema> lista2) {
+        //Variables globales
+        int renglonClase = 0;
+        for (int i = 0; i < lista2.size(); i++) {
+            if (lista2.get(i).getNumToken() == 55) {
+                if (i + 1 < lista2.size()) {
+                    if (lista2.get(i + 1).getNumToken() == 9) {
+                        renglonClase = i + 2;
+                    }
+                }
+
+            }
+        }
+        ArrayList<Lexema> lxV = new ArrayList<>();
+        ArrayList<Lexema> lxM = new ArrayList<>();
+        for (int i = 0; i < lista2.size(); i++) {
+            if (lista2.get(i).getNumToken() == 21) {
+                //Metodos
+                int llaveAbre = 0;
+                boolean llaveCierra = false;
+                while (true) {
+                    if (lista2.get(i).getNumToken() == 9) {
+                        if (!llaveCierra) {
+                            llaveCierra = true;
+                        }
+                        llaveAbre++;
+                    } else if (lista2.get(i).getNumToken() == 10) {
+                        llaveAbre--;
+                    }
+                    Lexema lx = new Lexema();
+                    lx.setLexema(lista2.get(i).getLexema());
+                    lx.setNumToken(lista2.get(i).getNumToken());
+                    lx.setNombreToken(lista2.get(i).getNombreToken());
+                    lxM.add(lx);
+                    lista2.remove(i);
+
+                    if (llaveAbre == 0 && llaveCierra) {
+                        break;
+                    }
+                }
+
+            }
+
+        }
+        for (int i = 0; i < lista2.size(); i++) {
+            if (lista2.get(i).getNumToken() == 1 || lista2.get(i).getNumToken() == 50) {
+                while (true) {
+
+                    if (lista2.get(i).getNumToken() == 2) {
+                        Lexema lx = new Lexema();
+                        lx.setLexema(lista2.get(i).getLexema());
+                        lx.setNumToken(lista2.get(i).getNumToken());
+                        lx.setNombreToken(lista2.get(i).getNombreToken());
+                        lxV.add(lx);
+                        lista2.remove(i);
+                        i--;
+                        break;
+                    } else {
+                        Lexema lx = new Lexema();
+                        lx.setLexema(lista2.get(i).getLexema());
+                        lx.setNumToken(lista2.get(i).getNumToken());
+                        lx.setNombreToken(lista2.get(i).getNombreToken());
+                        lxV.add(lx);
+                        lista2.remove(i);
+                    }
+                }
+            }
+        }
+        for (int i = 0; i < lxV.size(); i++) {
+            lista2.add(renglonClase, lxV.get(i));
+            renglonClase++;
+        }
+        for (int i = 0; i < lxM.size(); i++) {
+            lista2.add(renglonClase, lxM.get(i));
+            renglonClase++;
+        }
+
+        return lista2;
+    }
+
+    private ArrayList<Lexema> optimizaVariablesSinUso(ArrayList<Lexema> lista2) {
+        ArrayList<Variable> arrV = new ArrayList<>();
+
+        for (int i = 0; i < lista2.size(); i++) {
+
+            if (lista2.get(i).getNumToken() == 1) {
+                i++;
+                if (lista2.get(i).getNumToken() == 50) {
+                    Variable v = new Variable(lista2.get(i).getLexema(), null, false, false, 0, null);
+                    i++;
+                    if (lista2.get(i).getNumToken() == 53) {
+                        v.setInicializada(true);
+                    }
+                    arrV.add(v);
+                }
+            }
+        }
+        //Apilicar propiedades aritmeticas
+        for (int i = 0; i < lista2.size(); i++) {
+            if (lista2.get(i).getNumToken() == 50) {
+                if (lista2.get(i - 1).getLexema().equals("*")) {
+                    if (lista2.get(i - 2).getLexema().equals("1")) {
+                        lista2.remove(i - 2);
+                        lista2.remove(i - 2);
+                    } else if (lista2.get(i - 2).getLexema().equals("0")) {
+                        lista2.remove(i - 1);
+                        lista2.remove(i);
+                    }
+                } else if (lista2.get(i + 1).getLexema().equals("*") || lista2.get(i + 1).getLexema().equals("/")) {
+                    if (lista2.get(i + 2).getLexema().equals("1")) {
+                        lista2.remove(i + 1);
+                        lista2.remove(i + 1);
+                    } else if (lista2.get(i + 1).getLexema().equals("*") && lista2.get(i + 2).getLexema().equals("0")) {
+                        lista2.remove(i + 1);
+                        lista2.remove(i);
+                    }
+                } else if (lista2.get(i - 1).getLexema().equals("+") || lista2.get(i - 1).getLexema().equals("-")) {
+                    if (lista2.get(i - 2).getLexema().equals("0")) {
+                        lista2.remove(i - 2);
+                        lista2.remove(i - 2);
+                    }
+                } else if (lista2.get(i + 1).getLexema().equals("+") || lista2.get(i + 1).getLexema().equals("-")) {
+                    if (lista2.get(i + 2).getLexema().equals("0")) {
+                        lista2.remove(i + 1);
+                        lista2.remove(i + 1);
+                    }
+                }
+
+            }
+        }
+
+        //Si x=x; eliminar instruccion
+        for (int i = 0; i < lista2.size(); i++) {
+            if (lista2.get(i).getNumToken() == 50 && lista2.get(i + 1).getLexema().equals("=") && lista2.get(i + 2).getLexema().equals(lista2.get(i).getLexema()) && lista2.get(i + 3).getLexema().equals(";")) {
+                if (lista2.get(i).getNumToken() == 1) {
+                    lista2.remove(i - 1);
+                    lista2.remove(i - 1);
+                    lista2.remove(i - 1);
+                    lista2.remove(i - 1);
+                    lista2.remove(i - 1);
+                } else {
+                    lista2.remove(i);
+                    lista2.remove(i);
+                    lista2.remove(i);
+                    lista2.remove(i);
+                }
+            }
+        }
+
+        for (int i = 0; i < lista2.size(); i++) {
+            if (lista2.get(i).getLexema().equals("=")) {
+                i++;
+                for (int j = 0; j < arrV.size(); j++) {
+
+                    if (lista2.get(i - 2).getLexema().equals(arrV.get(j).getVariable())) {
+                        arrV.get(j).setInicializada(true);
+                    }
+                }
+                while (!lista2.get(i).getLexema().equals(";")) {
+                    if (lista2.get(i).getNumToken() == 50) {
+                        for (int j = 0; j < arrV.size(); j++) {
+                            if (lista2.get(i).getLexema().equals(arrV.get(j).getVariable())) {
+                                arrV.get(j).setUnica(true);
+                            }
+                        }
+
+                    }
+                    i++;
+                }
+            }
+        }
+        //Sin inicializar
+        for (int i = 0; i < lista2.size(); i++) {
+            if (lista2.get(i).getNumToken() == 50) {
+                for (int j = 0; j < arrV.size(); j++) {
+                    if (lista2.get(i).getLexema().equals(arrV.get(j).getVariable()) && (arrV.get(j).isInicializada() == false)) {
+                        if (lista2.get(i - 1).getNumToken() == 1) {
+                            if (lista2.get(i + 1).getNumToken() == 2) {
+                                //Se elimina el tipo, lexema, punto y coma
+                                lista2.remove(i - 1);
+                                lista2.remove(i - 1);
+                                lista2.remove(i - 1);
+                            } else if (lista2.get(i + 1).getNumToken() == 15) {//coma
+                                //Se elimina el lexema, coma
+                                lista2.remove(i + 1);
+                                lista2.remove(i + 1);
+                            }
+
+                        } else if (lista2.get(i - 1).getNumToken() == 15) {
+                            if (lista2.get(i + 1).getNumToken() == 2) {
+                                //Se elimina la coma , lexema
+                                lista2.remove(i - 1);
+                                lista2.remove(i - 1);
+                            } else if (lista2.get(i + 1).getNumToken() == 15) {//coma
+                                //Se elimina el coma, lexema
+
+                                lista2.remove(i - 1);
+                                lista2.remove(i - 1);
+                            }
+                        }
+                        i = 0;
+                    } else {
+
+                    }
+                }
+            }
+        }
+        //Variables que tienen valor pero nunca son usadas
+        for (int i = 0; i < arrV.size(); i++) {
+            boolean valor = false;
+            for (int j = 0; j < lista2.size(); j++) {
+                if (lista2.get(j).getNumToken() == 50) {
+                    if (arrV.get(i).getVariable().equals(lista2.get(j).getLexema())) {
+                        if (lista2.get(j + 1).getLexema().equals("=")) {
+                            j++;
+                            while (!lista2.get(j).getLexema().equals(";")) {
+                                if (lista2.get(j).getNumToken() == 50) {
+                                    valor = true;
+                                    break;
+                                } else {
+                                    j++;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (valor == false && arrV.get(i).isUnica() == false) {
+                for (int j = 0; j < lista2.size(); j++) {
+
+                    if (lista2.get(j).getNumToken() == 50) {
+                        if (arrV.get(i).getVariable().equals(lista2.get(j).getLexema())) {
+
+                            if (lista2.get(j - 1).getNumToken() == 1) {
+                                if (lista2.get(j + 1).getNumToken() == 2) {
+                                    //Se elimina el tipo, lexema, punto y coma
+                                    lista2.remove(j - 1);
+                                    lista2.remove(j - 1);
+                                    lista2.remove(j - 1);
+                                } else if (lista2.get(j + 1).getNumToken() == 15) {//coma
+                                    //Se elimina el lexema, coma
+                                    lista2.remove(j + 1);
+                                    lista2.remove(j + 1);
+                                } else if (lista2.get(j + 1).getLexema().equals("=")) {
+                                    //eliminar
+                                    j++;
+                                    while (true) {
+                                        if (lista2.get(j).getLexema().equals(";") || lista2.get(j).getLexema().equals(",")) {
+                                            break;
+                                        } else {
+                                            lista2.remove(j);
+                                        }
+                                    }
+                                    //Eliminar 
+
+                                }
+
+                            } else if (lista2.get(j - 1).getNumToken() == 15) {
+                                if (lista2.get(j + 1).getNumToken() == 2) {
+                                    //Se elimina la coma , lexema
+                                    lista2.remove(j - 1);
+                                    lista2.remove(j - 1);
+                                } else if (lista2.get(j + 1).getNumToken() == 15) {//coma
+                                    //Se elimina el coma, lexema
+
+                                    lista2.remove(j - 1);
+                                    lista2.remove(j - 1);
+                                } else if (lista2.get(j + 1).getLexema().equals("=")) {
+                                    //eliminar
+                                    j++;
+                                    while (true) {
+                                        if (lista2.get(j).getLexema().equals(";") || lista2.get(j).getLexema().equals(",")) {
+                                            break;
+                                        } else {
+                                            lista2.remove(j);
+                                        }
+                                    }
+                                    //Eliminar 
+
+                                    if (lista2.get(j).getNumToken() == 2) {
+                                        //Se elimina el tipo, lexema, punto y coma
+                                        lista2.remove(j - 1);
+                                        lista2.remove(j - 1);
+                                        lista2.remove(j - 1);
+                                    } else if (lista2.get(j + 1).getNumToken() == 15) {//coma
+                                        //Se elimina el lexema, coma
+                                        lista2.remove(j + 1);
+                                        lista2.remove(j + 1);
+                                    }
+
+                                }
+                            }
+
+                        }
+                    }
+
+                }
+            }
+        }
+        //Quitar parentesis inecesarios
+
+        for (int i = 0; i < lista2.size(); i++) {
+            if (lista2.get(i).getNumToken() == 9) {
+                if (lista2.get(i + 2).getNumToken() == 10) {
+                    lista2.remove(i);
+                    lista2.remove(i + 1);
+                }
+            }
+
+        }
+
+        return lista2;
+    }
+
+
 }

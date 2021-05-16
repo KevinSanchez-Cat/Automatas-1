@@ -42,6 +42,25 @@ public class Semantico {
         return valor;
     }
 
+    public static String conversionArrayCola2(ArrayList<String> arr) {
+        String valor;
+        if (arr.size() == 1) {
+            return arr.get(0);
+        } else {
+            ColaD colaOperaciones = new ColaD();
+            for (int i = 0; i < arr.size(); i++) {
+                Nodo n = new Nodo(arr.get(i), -1);
+                colaOperaciones.inserta(n, null);
+            }
+            Semantico s = new Semantico();
+            ColaD notacionPostfija = s.posfijo(colaOperaciones);
+
+            valor = String.valueOf(s.operaciones2(notacionPostfija));
+        }
+
+        return valor;
+    }
+
     /**
      * Método que realiza la converión de una notación infija, a una postfija.
      * Con el uso de pilas
@@ -101,8 +120,7 @@ public class Semantico {
 //
 //        return pResultado;
 //    }
-
-     public ColaD posfijo(ColaD cola) {
+    public ColaD posfijo(ColaD cola) {
 
         ColaD pResultado = new ColaD();
         PilaD pOperadores = new PilaD();
@@ -114,7 +132,7 @@ public class Semantico {
                         String s2 = pOperadores.elimina(null).getS();
                         if (isOperador(s2)) {
                             if (prioridad(s2) >= prioridad(s)) {
-                               // pOperadores.inserta(new Nodo(s, -1), null);
+                                // pOperadores.inserta(new Nodo(s, -1), null);
                                 pResultado.inserta(new Nodo(s2, -1), null);
                                 insertaPOperdadores(s, pOperadores, pResultado);
                             } else if (prioridad(s) > prioridad(s2)) {
@@ -163,7 +181,7 @@ public class Semantico {
                 if (prioridad(s2) >= prioridad(s)) {
                     pOperadores.inserta(new Nodo(s, -1), null);
                     pResultado.inserta(new Nodo(s2, -1), null);
-                    
+
                 } else if (prioridad(s) > prioridad(s2)) {
                     pOperadores.inserta(new Nodo(s2, -1), null);
                     pOperadores.inserta(new Nodo(s, -1), null);
@@ -179,7 +197,7 @@ public class Semantico {
             pOperadores.inserta(new Nodo(s, -1), null);
         }
     }
-    
+
     /**
      * Método que verifica que el lexema sea un operador o no
      *
@@ -238,9 +256,11 @@ public class Semantico {
         while (pResultado.getF() != null) {
             String s = pResultado.elimina(null).getS();
             if (isOperador(s)) {
-                String op2 = pOperacion.elimina(null).getS();
+                String op2 = "0";
+                String op1 = "0";
 
-                String op1 = pOperacion.elimina(null).getS();
+                op2 = pOperacion.elimina(null).getS();
+                op1 = pOperacion.elimina(null).getS();
 
                 String tipoOp1 = tipoDato(op1);
                 String tipoOp2 = tipoDato(op2);
@@ -263,6 +283,33 @@ public class Semantico {
                     System.out.println("Compatilibidad de operaciones");
                     break;
                 }
+            } else {
+                pOperacion.inserta(new Nodo(s, -1), null);
+            }
+        }
+
+        return resultado;
+
+    }
+
+    /**
+     * Metodo que realiza la operación, segun la prioridad de las operaciones
+     *
+     * @param pResultado
+     * @return
+     */
+    public Object operaciones2(ColaD pResultado) {
+        PilaD pOperacion = new PilaD();
+        Object resultado = 0;
+        while (pResultado.getF() != null) {
+            String s = pResultado.elimina(null).getS();
+            if (isOperador(s)) {
+                String op2 = pOperacion.elimina(null).getS();
+                String op1 = pOperacion.elimina(null).getS();
+                pOperacion.inserta(new Nodo(String.valueOf(op1 + " " + s + " " + op2), -1), null);
+
+                resultado = op1 + " " + s + " " + op2;
+
             } else {
                 pOperacion.inserta(new Nodo(s, -1), null);
             }

@@ -1,5 +1,6 @@
 package codigo;
 import java_cup.runtime.Symbol;
+import java.util.ArrayList;
 %%
 %class LexerCup
 %type java_cup.runtime.Symbol
@@ -307,24 +308,86 @@ _{L}({L}|{D}) {TablaSimbolos nodo;
             return new Symbol(sym.Cadena, yychar, yyline, yytext());}
 
 /* Numero */
-("(-"{D}+")")|{D}+  {TablaSimbolos nodo;
-            nodo = new TablaSimbolos();
-            nodo.setLexema(yytext());
-            nodo.setNumToken(51);
-            nodo.setNumLinea(yyline+1);
-            nodo.setTipoToken("Entero");
-            Main.lexema.add(nodo);
-            return new Symbol(sym.Numero, yychar, yyline, yytext());}
+(-?{D}+)  {
+            if(yytext().toString().startsWith("-")){
+                if (Main.lexema.get(Main.lexema.size()-1).getLexema().equals("-") || Main.lexema.get(Main.lexema.size()-1).getLexema().equals("+") || Main.lexema.get(Main.lexema.size()-1).getLexema().equals("*") || Main.lexema.get(Main.lexema.size()-1).getLexema().equals("/") || Main.lexema.get(Main.lexema.size()-1).getLexema().equals("^") || Main.lexema.get(Main.lexema.size()-1).getLexema().equals("%")) {
+                    TablaSimbolos nodo;
+                    nodo = new TablaSimbolos();
+                    nodo.setLexema(yytext());
+                    nodo.setNumToken(51);
+                    nodo.setNumLinea(yyline+1);
+                    nodo.setTipoToken("Entero");
+                    Main.lexema.add(nodo);
+                    return new Symbol(sym.Numero, yychar, yyline, yytext());
+                } else { 
+                    TablaSimbolos nodo;
+                   nodo = new TablaSimbolos();
+                   nodo.setLexema("-");
+                   nodo.setNumToken(4);
+                   nodo.setNumLinea(yyline+1);
+                   nodo.setTipoToken("Operador aritmético ");
+                   Main.lexema.add(nodo); 
 
+                   nodo = new TablaSimbolos();
+                   nodo.setLexema(yytext().substring(1, yytext().length()));
+                   nodo.setNumToken(51);
+                   nodo.setNumLinea(yyline+1);
+                   nodo.setTipoToken("Entero");
+                   Main.lexema.add(nodo);
+                   return new Symbol(sym.Numero, yychar, yyline, yytext());
+                }
+            } else {
+                TablaSimbolos nodo;
+                nodo = new TablaSimbolos();
+                nodo.setLexema(yytext());
+                nodo.setNumToken(51);
+                nodo.setNumLinea(yyline+1);
+                nodo.setTipoToken("Entero");
+                Main.lexema.add(nodo);
+                return new Symbol(sym.Numero, yychar, yyline, yytext());
+            }
+}
 /* Flotante */
-{D}+ (".") {D}+ {TablaSimbolos nodo;
-            nodo = new TablaSimbolos();
-            nodo.setLexema(yytext());
-            nodo.setNumToken(52);
-            nodo.setNumLinea(yyline+1);
-            nodo.setTipoToken("Flotante");
-            Main.lexema.add(nodo); 
-            return new Symbol(sym.Flotante, yychar, yyline, yytext());}
+-?{D}+ (".") {D}+ {
+            if(yytext().toString().startsWith("-")){
+                if (Main.lexema.get(Main.lexema.size()-1).getLexema().equals("-") || Main.lexema.get(Main.lexema.size()-1).getLexema().equals("+") || Main.lexema.get(Main.lexema.size()-1).getLexema().equals("*") || Main.lexema.get(Main.lexema.size()-1).getLexema().equals("/") || Main.lexema.get(Main.lexema.size()-1).getLexema().equals("^") || Main.lexema.get(Main.lexema.size()-1).getLexema().equals("%")) {
+                    TablaSimbolos nodo;
+                    nodo = new TablaSimbolos();
+                    nodo.setLexema(yytext());
+                    nodo.setNumToken(52);
+                    nodo.setNumLinea(yyline+1);
+                    nodo.setTipoToken("Flotante");
+                    Main.lexema.add(nodo); 
+                    return new Symbol(sym.Flotante, yychar, yyline, yytext());
+                } else { 
+                    TablaSimbolos nodo;
+                   nodo = new TablaSimbolos();
+                   nodo.setLexema("-");
+                   nodo.setNumToken(4);
+                   nodo.setNumLinea(yyline+1);
+                   nodo.setTipoToken("Operador aritmético ");
+                   Main.lexema.add(nodo); 
+
+                    nodo = new TablaSimbolos();
+                    nodo.setLexema(yytext().substring(1, yytext().length()));
+                    nodo.setNumToken(52);
+                    nodo.setNumLinea(yyline+1);
+                    nodo.setTipoToken("Flotante");
+                    Main.lexema.add(nodo); 
+                    return new Symbol(sym.Flotante, yychar, yyline, yytext());
+                }
+            } else {
+                TablaSimbolos nodo;
+                nodo = new TablaSimbolos();
+                nodo.setLexema(yytext());
+                nodo.setNumToken(52);
+                nodo.setNumLinea(yyline+1);
+                nodo.setTipoToken("Flotante");
+                Main.lexema.add(nodo); 
+                return new Symbol(sym.Flotante, yychar, yyline, yytext());
+            }
+
+            }
 
 /* Error de analisis */
  . {return new Symbol(sym.ERROR, yychar, yyline, yytext());}
