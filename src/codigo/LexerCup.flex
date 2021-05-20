@@ -310,7 +310,7 @@ _{L}({L}|{D}) {TablaSimbolos nodo;
 /* Numero */
 (-?{D}+)  {
             if(yytext().toString().startsWith("-")){
-                if (Main.lexema.get(Main.lexema.size()-1).getLexema().equals("-") || Main.lexema.get(Main.lexema.size()-1).getLexema().equals("+") || Main.lexema.get(Main.lexema.size()-1).getLexema().equals("*") || Main.lexema.get(Main.lexema.size()-1).getLexema().equals("/") || Main.lexema.get(Main.lexema.size()-1).getLexema().equals("^") || Main.lexema.get(Main.lexema.size()-1).getLexema().equals("%")) {
+                if (Main.lexema.get(Main.lexema.size()-1).getLexema().equals("=") || Main.lexema.get(Main.lexema.size()-1).getLexema().equals("-") || Main.lexema.get(Main.lexema.size()-1).getLexema().equals("+") || Main.lexema.get(Main.lexema.size()-1).getLexema().equals("*") || Main.lexema.get(Main.lexema.size()-1).getLexema().equals("/") || Main.lexema.get(Main.lexema.size()-1).getLexema().equals("^") || Main.lexema.get(Main.lexema.size()-1).getLexema().equals("%")) {
                     TablaSimbolos nodo;
                     nodo = new TablaSimbolos();
                     nodo.setLexema(yytext());

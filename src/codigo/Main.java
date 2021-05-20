@@ -221,7 +221,7 @@ public class Main extends javax.swing.JFrame {
         jLabel10.setFont(new java.awt.Font("Segoe UI Symbol", 1, 24)); // NOI18N
         jLabel10.setForeground(new java.awt.Color(0, 51, 102));
         jLabel10.setText("Optimizado");
-        jPanel1.add(jLabel10, new org.netbeans.lib.awtextra.AbsoluteConstraints(650, 550, 140, -1));
+        jPanel1.add(jLabel10, new org.netbeans.lib.awtextra.AbsoluteConstraints(640, 550, 140, -1));
 
         objeto.setColumns(20);
         objeto.setFont(new java.awt.Font("SansSerif", 0, 17)); // NOI18N
@@ -336,7 +336,12 @@ public class Main extends javax.swing.JFrame {
         fuente.setText(null);
         lexico.setText(null);
         sintactico.setText(null);
-
+        semantico.setText(null);
+        objeto.setText(null);
+        Codigo.fuente.setText(null);
+        Codigo.optimizado.setText(null);
+        Codigo.txtCodigoFuente.setText(null);
+        Codigo.txtCodigoOptimizado.setText(null);
     }//GEN-LAST:event_btnLimpiaActionPerformed
 
     public static void notificar_er(String cad) {
@@ -496,7 +501,7 @@ public class Main extends javax.swing.JFrame {
                     sintactico.setForeground(new Color(25, 111, 61));
                 } else {
                     sintactico.append("Análisis realizado correctamente");
-                    sintactico.setForeground(Color.RED);
+                    sintactico.setForeground(new Color(25, 111, 61));
                 }
             } catch (Exception ex) {
 //                Symbol sym = s.getS();
@@ -514,14 +519,14 @@ public class Main extends javax.swing.JFrame {
             semantico.setText("");
         } else {
             AnalisisSemantico.mensajesError = "";
-            for (int i = 0; i <lexema.size(); i++) {
-                System.out.println(lexema.get(i).getLexema()+" "+lexema.get(i).getNumToken());
-                if(lexemas.get(i).getLexema().equals("-")){
-                    //Numero - Nmumero
-                    // = - Numero
-                }
-            }
-            
+//            for (int i = 0; i <lexema.size(); i++) {
+//                System.out.println(lexema.get(i).getLexema()+" "+lexema.get(i).getNumToken());
+//                if(lexemas.get(i).getLexema().equals("-")){
+//                    //Numero - Nmumero
+//                    // = - Numero
+//                }
+//            }
+//            
             AnalisisSemantico.analizar(lexema);
             if (AnalisisSemantico.mensajesError.equals("")) {
                 semantico.append("Análisis realizado correctamente");
