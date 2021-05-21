@@ -743,7 +743,7 @@ public class Main extends javax.swing.JFrame {
             optimizado += lista2.get(i).getLexema();
             if (lista2.get(i).getNumToken() == 9 || lista2.get(i).getNumToken() == 10 || lista2.get(i).getNumToken() == 2) {
                 optimizado += "\n";
-            } else if (lista2.get(i).getNumToken() == 1 || lista2.get(i).getNumToken() == 16 || lista2.get(i).getNumToken() == 19 || lista2.get(i).getNumToken() == 21 || lista2.get(i).getNumToken() == 56) {
+            } else{
                 optimizado += " ";
             }
         }

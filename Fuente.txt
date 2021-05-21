@@ -51,9 +51,9 @@ void _operaciones (){
     b  = 400+234;
     int k = 234;
     b = a*k;
-    b = a*k+2000;
-    b = 234+a*c;
-     b = -1;
+    a = a*k+2000;
+    k = 234+a*c;
+    b = -1;
 }
 
 }
