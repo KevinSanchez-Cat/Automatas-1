@@ -13,15 +13,15 @@ public class Lexema {
     
     String lexema;
     int numToken;
-    String tipoToken;
-    int numLinea;
+    String nombreToken;
+    int renglon;
 
     public int getNumLinea() {
-        return numLinea;
+        return renglon;
     }
 
     public void setNumLinea(int numLinea) {
-        this.numLinea = numLinea;
+        this.renglon = numLinea;
     }
 
     public String getLexema() {
@@ -41,11 +41,11 @@ public class Lexema {
     }
 
     public String getTipoToken() {
-        return tipoToken;
+        return nombreToken;
     }
 
     public void setTipoToken(String tipoToken) {
-        this.tipoToken = tipoToken;
+        this.nombreToken = tipoToken;
     }
     
     

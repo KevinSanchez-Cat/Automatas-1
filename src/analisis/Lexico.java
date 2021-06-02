@@ -1,5 +1,6 @@
 package analisis;
 
+import codigo.Semantico;
 import java.util.StringTokenizer;
 import java.io.File;
 import java.io.FileInputStream;
@@ -303,25 +304,87 @@ public class Lexico {
      * @return una lista de Lexemas, como analisis lexico contienen toda la
      * información para saber si es lexicamente correcto o no
      */
-    public ArrayList<Lexema> analisisLexico() {
+//    public ArrayList<Lexema> analisisLexico() {
+//
+//        ArrayList<String> lexemas = separaCodigo();
+//        buscarTokensFijos(lexemas);
+//        for (int i = 0; i < getListaLexico().size(); i++) {
+//            getListaLexico().get(i).setRenglon(numRenglon[i]);
+//        }
+//        //Corrgige el punto decimal si es un numero
+//        for (int i = 0; i < getListaLexico().size(); i++) {
+//            if (getListaLexico().get(i).getNumToken() == 51) {
+//                if (i + 1 < getListaLexico().size()) {
+//                    if ((getListaLexico().get(i + 1).getNumToken() == 3) && (getListaLexico().get(i).getRenglon() == getListaLexico().get(i + 1).getRenglon())) {
+//                        if (i + 2 < getListaLexico().size()) {
+//                            if ((getListaLexico().get(i + 2).getNumToken() == 52)
+//                                    && (getListaLexico().get(i).getRenglon() == getListaLexico().get(i + 2).getRenglon())) {
+//                                Lexema num2 = getListaLexico().remove(i + 2);
+//                                Lexema pun = getListaLexico().remove(i + 1);
+//                                String s = getListaLexico().get(i).getLexema() + pun.getLexema() + num2.getLexema();
+//                                getListaLexico().get(i).setLexema(s);
+//                                getListaLexico().get(i).setNumToken(52);
+//                                getListaLexico().get(i).setNombreToken("Numero flotante");
+//                            }
+//                        }
+//                    }
+//                }
+//            }
+//        }
+//
+//        for (int i = 0; i < getListaLexico().size(); i++) {
+//            if (getListaLexico().get(i).getNumToken() == 51 || getListaLexico().get(i).getNumToken() == 52) {
+//                if (getListaLexico().get(i).getLexema().startsWith("-")) {
+//                    if ((i - 1) > 0 && (i - 1) < getListaLexico().size()) {
+//                        if (getListaLexico().get(i - 1).getNumToken() == 51 || getListaLexico().get(i - 1).getNumToken() == 50 || getListaLexico().get(i - 1).getNumToken() == 52|| getListaLexico().get(i - 1).getNumToken() == 8) {
+//                            String s = getListaLexico().get(i).getLexema().replaceFirst("-", "");
+//                            Lexema lxMenos = new Lexema();
+//                            lxMenos.setLexema("-");
+//                            lxMenos.setNombreToken("Operador aritmetico menos");
+//                            lxMenos.setNumToken(4);
+//                            lxMenos.setRenglon(getListaLexico().get(i).getRenglon());
+//
+//                            Lexema lxNumero = new Lexema();
+//                            lxNumero.setLexema(s);
+//                            lxNumero.setRenglon(getListaLexico().get(i).getRenglon());
+//                            lxNumero.setNombreToken("Numero entero");
+//
+//                            String s2 = Semantico.tipoDato(s);
+//                            if (s2 == "INTEGER") {
+//                                lxNumero.setNumToken(51);
+//                            } else {
+//                                lxNumero.setNumToken(52);
+//                            }
+//                            getListaLexico().remove(i);
+//                            getListaLexico().add(i, lxMenos);
+//                            getListaLexico().add(i+1, lxNumero);
+//                            
+//                        }
+//                    }
+//                }
+//
+//            }
+//        }
+//        //Quita los comentarios para el sintactico y agrega los identificadores a al tabla de tokens
+//        return getListaLexico();
+//    }
+        public ArrayList<Lexema> analisisLexico() {
 
         ArrayList<String> lexemas = separaCodigo();
         buscarTokensFijos(lexemas);
         for (int i = 0; i < getListaLexico().size(); i++) {
             getListaLexico().get(i).setRenglon(numRenglon[i]);
         }
-        //Corrgige el punto decimal si es un numero
+//Corrgige el punto decimal si es un numero
         for (int i = 0; i < getListaLexico().size(); i++) {
-
             if (getListaLexico().get(i).getNumToken() == 51) {
                 if (i + 1 < getListaLexico().size()) {
                     if ((getListaLexico().get(i + 1).getNumToken() == 3) && (getListaLexico().get(i).getRenglon() == getListaLexico().get(i + 1).getRenglon())) {
                         if (i + 2 < getListaLexico().size()) {
-                            if ((getListaLexico().get(i + 2).getNumToken() == 51)
+                            if ((getListaLexico().get(i + 2).getNumToken() == 52)
                                     && (getListaLexico().get(i).getRenglon() == getListaLexico().get(i + 2).getRenglon())) {
                                 Lexema num2 = getListaLexico().remove(i + 2);
                                 Lexema pun = getListaLexico().remove(i + 1);
-
                                 String s = getListaLexico().get(i).getLexema() + pun.getLexema() + num2.getLexema();
                                 getListaLexico().get(i).setLexema(s);
                                 getListaLexico().get(i).setNumToken(52);
@@ -330,9 +393,156 @@ public class Lexico {
                         }
                     }
                 }
+            }
+        }
+
+        for (int i = 0; i < getListaLexico().size(); i++) {
+            if (getListaLexico().get(i).getNumToken() == 51 || getListaLexico().get(i).getNumToken() == 52) {
+                if (getListaLexico().get(i).getLexema().startsWith("-")) {
+                    if ((i - 1) > 0 && (i - 1) < getListaLexico().size()) {
+                        if (getListaLexico().get(i - 1).getNumToken() == 51 || getListaLexico().get(i - 1).getNumToken() == 50 || getListaLexico().get(i - 1).getNumToken() == 52 || getListaLexico().get(i - 1).getNumToken() == 8) {
+                            String s = getListaLexico().get(i).getLexema().replaceFirst("-", "");
+                            Lexema lxMenos = new Lexema();
+                            lxMenos.setLexema("-");
+                            lxMenos.setNombreToken("Operador aritmetico menos");
+                            lxMenos.setNumToken(4);
+                            lxMenos.setRenglon(getListaLexico().get(i).getRenglon());
+
+                            Lexema lxNumero = new Lexema();
+                            lxNumero.setLexema(s);
+                            lxNumero.setRenglon(getListaLexico().get(i).getRenglon());
+                            lxNumero.setNombreToken("Numero entero");
+
+                            String s2 = Semantico.tipoDato(s);
+                            if (s2 == "INTEGER") {
+                                lxNumero.setNumToken(51);
+                            } else {
+                                lxNumero.setNumToken(52);
+                            }
+                            getListaLexico().remove(i);
+                            getListaLexico().add(i, lxMenos);
+                            getListaLexico().add(i + 1, lxNumero);
+
+                        }
+                    }
+                }
+            }
+        }
+
+        for (int i = 0; i < getListaLexico().size(); i++) {
+
+            if (getListaLexico().get(i).getLexema().equals("-")) {
+
+                if (getListaLexico().get(i - 1).getNumToken() == 50 || getListaLexico().get(i - 1).getNumToken() == 51 || getListaLexico().get(i - 1).getNumToken() == 52 || getListaLexico().get(i - 1).getNumToken() == 53) {
+// Var - 3
+// 4 - 3
+// "
+                } else {
+                    if (getListaLexico().get(i - 1).getLexema().equals("=") || getListaLexico().get(i - 1).getLexema().equals("(") || getListaLexico().get(i - 1).getNumToken() == 4) {
+// = -3
+// ( -3
+                        getListaLexico().remove(i);
+                        Lexema lxNumero = new Lexema();
+                        lxNumero.setLexema("-".concat(getListaLexico().get(i).getLexema()));
+                        lxNumero.setRenglon(getListaLexico().get(i).getRenglon());
+                        if (lxNumero.getLexema().contains(".")) {
+                            lxNumero.setNumToken(52);
+                        } else {
+                            lxNumero.setNumToken(51);
+                        }
+                        getListaLexico().set(i, lxNumero);
+                    }
+                }
 
             }
         }
+//Corrgige el punto decimal si es un numero
+        for (int i = 0; i < getListaLexico().size(); i++) {
+            if (getListaLexico().get(i).getNumToken() == 51) {
+                if (i + 1 < getListaLexico().size()) {
+                    if ((getListaLexico().get(i + 1).getNumToken() == 3)) {
+                        if (i + 2 < getListaLexico().size()) {
+                            if ((getListaLexico().get(i + 2).getNumToken() == 51)) {
+                                Lexema num2 = getListaLexico().remove(i + 2);
+                                Lexema pun = getListaLexico().remove(i + 1);
+                                String s = getListaLexico().get(i).getLexema() + pun.getLexema() + num2.getLexema();
+                                getListaLexico().get(i).setLexema(s);
+                                getListaLexico().get(i).setNumToken(52);
+                                getListaLexico().get(i).setNombreToken("Numero flotante");
+                            }
+                        }
+                    }
+                }
+            } else if (getListaLexico().get(i).getNumToken() == 52) {
+                if (i + 1 < getListaLexico().size()) {
+                    if ((getListaLexico().get(i + 1).getNumToken() == 3)) {
+                        if (i + 2 < getListaLexico().size()) {
+                            if ((getListaLexico().get(i + 2).getNumToken() == 51)) {
+                                Lexema num2 = getListaLexico().remove(i + 2);
+                                Lexema pun = getListaLexico().remove(i + 1);
+                                String s = getListaLexico().get(i).getLexema() + pun.getLexema() + num2.getLexema();
+                                getListaLexico().get(i).setLexema(s);
+                                getListaLexico().get(i).setNumToken(52);
+                                getListaLexico().get(i).setNombreToken("Numero flotante");
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        for (int i = 0; i < getListaLexico().size(); i++) {
+            if (getListaLexico().get(i).getLexema().startsWith("-")) {
+                if (getListaLexico().get(i).getLexema().length() == 1) {
+
+                } else {
+                    String flotante = getListaLexico().get(i).getLexema().substring(1, getListaLexico().get(i).getLexema().length());
+                    System.out.println(flotante);
+                    if (flotante.startsWith("-")) {
+                        Lexema m1 = new Lexema();
+                        m1.setLexema("-");
+                        m1.setNumToken(4);
+                        Lexema m2 = new Lexema();
+                        m2.setLexema(getListaLexico().get(i).getLexema().substring(1, getListaLexico().get(i).getLexema().length()));
+                        m2.setNumToken(4);
+                        getListaLexico().set(i, m1);
+                        getListaLexico().add(i + 1, m2);
+                        i = 0;
+                    } else {
+
+                    }
+
+                }
+
+            }
+        }
+        for (int i = 0; i < getListaLexico().size(); i++) {
+
+            if (getListaLexico().get(i).getLexema().equals("-")) {
+
+                if (getListaLexico().get(i - 1).getNumToken() == 50 || getListaLexico().get(i - 1).getNumToken() == 51 || getListaLexico().get(i - 1).getNumToken() == 52 || getListaLexico().get(i - 1).getNumToken() == 53) {
+// Var - 3
+// 4 - 3
+// "
+                } else {
+                    if (getListaLexico().get(i - 1).getLexema().equals("=") || getListaLexico().get(i - 1).getLexema().equals("(") || getListaLexico().get(i - 1).getNumToken() == 4) {
+// = -3
+// ( -3
+                        getListaLexico().remove(i);
+                        Lexema lxNumero = new Lexema();
+                        lxNumero.setLexema("-".concat(getListaLexico().get(i).getLexema()));
+                        lxNumero.setRenglon(getListaLexico().get(i).getRenglon());
+                        if (lxNumero.getLexema().contains(".")) {
+                            lxNumero.setNumToken(52);
+                        } else {
+                            lxNumero.setNumToken(51);
+                        }
+                        getListaLexico().set(i, lxNumero);
+                    }
+                }
+
+            }
+        }
+
         //Quita los comentarios para el sintactico y agrega los identificadores a al tabla de tokens
         return getListaLexico();
     }
@@ -345,7 +555,7 @@ public class Lexico {
     private ArrayList<String> separaCodigo() {
 
         ArrayList<String> palabras = new ArrayList<>();
-        StringTokenizer st = new StringTokenizer(getTextoCodigo(), "+ -=*&| {}().[]^/%;:,<>\n\t\r!\" ", true);
+        StringTokenizer st = new StringTokenizer(getTextoCodigo(), "+ =*&| {}().[]-^/%;:,<>\n\t\r!\" ", true);
         String cadena;
         int contRenglon = 1; //incrementa las lineas de codigo
         int contRenglon2 = 1; //incrementa las lineas de codigo
@@ -770,7 +980,7 @@ public class Lexico {
                 case 13:
                 case 14:
                     if (a.getResAutomata().equals("Cadena valida")) {
-                        cadenaAnalizada.setNumToken(82);
+                        cadenaAnalizada.setNumToken(59);
                         cadenaAnalizada.setNombreToken("Comentario de linea");
                     } else {
                         cadenaAnalizada.setNumToken(96);
@@ -781,7 +991,7 @@ public class Lexico {
                 case 16:
                 case 17:
                     if (a.getResAutomata().equals("Cadena valida")) {
-                        cadenaAnalizada.setNumToken(83);
+                        cadenaAnalizada.setNumToken(60);
                         cadenaAnalizada.setNombreToken("Comentario de bloque");
                     } else {
                         cadenaAnalizada.setNumToken(97);

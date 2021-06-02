@@ -11,8 +11,9 @@ parser code
 
     public void syntax_error(Symbol s){
         
+        if (!s.value.toString().startsWith("-")){  
             Main.notificar_er("Error sintaxis en la linea " +(s.right+1) + " no se esperaba " + s.value );
-
+        }
     }
 
     public void unrecovered_syntax_error(Symbol s) throws java.lang.Exception{ 
@@ -84,7 +85,7 @@ DECLARACION ::=
     String Identificador P_coma |
     String Identificador AGREGAR P_coma |
     String Identificador Igual Cadena P_coma |
-    String Identificador Igual Cadena CONCATENAR 
+    String Identificador Igual Cadena CONCATENAR |
 
     Int Identificador P_coma | 
     Int Identificador AGREGAR P_coma | 
@@ -98,11 +99,11 @@ DECLARACION ::=
     Float Identificador P_coma | 
     Float Identificador AGREGAR P_coma | 
     Float Identificador Igual Cadena P_coma |
-    Float Identificador Igual Cadena AGREGAR P_coma|
+    Float Identificador Igual Cadena AGREGAR P_coma |
     Float Identificador Igual OPERACION_MAT P_coma |
     Float Identificador Igual OPERACION_MAT AGREGAR P_coma|
     Float Identificador Igual NUMEROS P_coma |
-    Float Identificador Igual NUMEROS AGREGAR P_coma
+    Float Identificador Igual NUMEROS AGREGAR P_coma |
 
     Boolean Identificador P_coma | 
     Boolean Identificador AGREGA_BOL P_coma | 
